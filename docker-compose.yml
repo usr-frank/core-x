@@ -16,3 +16,5 @@ services:
       - /home/frank/minecraft/data/usercache.json:/data/usercache.json:ro
       # Storage for the Database
       - ./corex_data:/data
+      # HOT SWAP CONFIG (The Fix)
+      - ./achievements.yaml:/app/achievements.yaml
