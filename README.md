@@ -2,6 +2,7 @@
 
 ![Platform](https://img.shields.io/badge/Platform-Docker-blue?logo=docker&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Operational-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > **Next-Gen Achievement Tracking for Minecraft Java Edition**
 
@@ -11,7 +12,8 @@ Core-X is a Dockerized Sidecar application that attaches to your Minecraft serve
 * **Zero Lag:** Runs completely outside the game process.
 * **Persistence:** Uses SQLite to store achievements forever.
 * **Identity:** Automatically syncs UUIDs to GamerTags.
-* **Web Dashboard:** Dark-mode UI to view leaderboards.
+* **Web Dashboard:** Dark-mode UI with live progress tracking.
+* **Configurable:** Define custom achievements via YAML.
 
 ## 🛠 Installation
 
@@ -29,18 +31,33 @@ volumes:
   - /path/to/your/minecraft/usercache.json:/data/usercache.json:ro
 ```
 
-### 3. Ignite
+### 3. Customize Achievements
+Edit `achievements.yaml` to define your own rules.
+```yaml
+achievements:
+  - id: MINER_69er
+    name: "It's Honest Work"
+    description: "Mine 1,000 Stone."
+    stat_key: "minecraft:mined:minecraft:stone"
+    threshold: 1000
+    icon: "⛏️"
+```
+
+### 4. Ignite
 ```bash
 docker compose up -d --build
 ```
 
-### 4. Verify
+### 5. Verify
 Access the dashboard at: `http://localhost:5000`
 
 ## 🏆 Default Achievements
 * **First Blood:** Die once.
 * **Leg Day:** Jump 10 times.
 * **Survivor:** Play for 24,000 ticks (1 day).
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 *Powered by Python, Flask, and SQLite.*

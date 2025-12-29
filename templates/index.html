@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORE-X | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="60">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Core-X // Vanguard</h1>
+        {% for player in data %}
+        <div class="player-card">
+            <div class="header">
+                <div class="gamertag">{{ player.name }}</div>
+                <div class="gs">{{ player.score }} G</div>
+            </div>
+            {% for ach in player.achievements %}
+            <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
+                <div class="icon">{{ ach.icon }}</div>
+                <div style="flex-grow: 1;">
+                    <span class="title">{{ ach.name }}</span>
+                    <span class="desc">{{ ach.description }}</span>
+                    {% if ach.is_unlocked %}
+                        <span class="date">Unlocked: {{ ach.unlocked_at }}</span>
+                    {% else %}
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: {{ ach.progress }}%;"></div>
+                        </div>
+                        <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        {% if not data %}
+        <p>System Online. Waiting for player data...</p>
+        {% endif %}
+    </div>
+</body>
+</html>

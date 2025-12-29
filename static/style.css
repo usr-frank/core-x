@@ -1,0 +1,39 @@
+body { background-color: #0f0f12; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+.container { max_width: 800px; margin: 0 auto; }
+h1 { letter-spacing: 4px; border-bottom: 2px solid #00ce7c; padding-bottom: 15px; color: #fff; text-transform: uppercase; font-size: 1.5rem; }
+.player-card { background: #18181b; padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.gamertag { font-size: 1.5em; font-weight: bold; color: #fff; }
+.gs { color: #00ce7c; font-weight: bold; background: rgba(0, 206, 124, 0.1); padding: 5px 10px; border-radius: 4px; }
+.achievement { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid #27272a; }
+.icon { font-size: 2.5em; margin-right: 20px; width: 50px; text-align: center; }
+.title { font-weight: bold; color: #ddd; display: block; }
+.desc { font-size: 0.9em; color: #888; }
+.date { font-size: 0.75em; color: #555; display: block; margin-top: 4px; }
+
+/* Progress Bar Styles */
+.progress-container {
+    width: 100%;
+    background-color: #333;
+    border-radius: 4px;
+    height: 8px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background-color: #00ce7c;
+    transition: width 0.5s ease-in-out;
+}
+.progress-text {
+    font-size: 0.75em;
+    color: #aaa;
+    margin-top: 4px;
+    display: block;
+}
+.locked {
+    opacity: 0.6;
+}
+.locked .icon {
+    filter: grayscale(100%);
+}
