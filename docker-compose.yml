@@ -1,0 +1,20 @@
+services:
+  core-x:
+    build: .
+    container_name: core-x
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MINECRAFT_STATS=/data/stats
+      - MINECRAFT_CACHE=/data/usercache.json
+      - DB_PATH=/data/corex.db
+    volumes:
+      # Minecraft Data (Read Only)
+      - /home/frank/minecraft/data/world/stats:/data/stats:ro
+      - /home/frank/minecraft/data/usercache.json:/data/usercache.json:ro
+      # Storage for the Database
+      - ./corex_data:/data
+    # THE FIX: Run init_db.py every time we start to ensure tables exist
+    command: >
+      sh -c "python3 init_db.py && python3 scanner.py && python3 app.py"

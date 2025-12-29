@@ -1,0 +1,11 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Mac/Linux system files
+.DS_Store
+.env
+venv/
+*.db
+corex_data/
