@@ -37,3 +37,18 @@ h1 { letter-spacing: 4px; border-bottom: 2px solid #00ce7c; padding-bottom: 15px
 .locked .icon {
     filter: grayscale(100%);
 }
+
+/* Points Badge */
+.points {
+    font-weight: bold;
+    color: #00ce7c;
+    margin-left: 15px;
+    min-width: 60px;
+    text-align: right;
+    font-size: 1.1em;
+}
+
+/* Gray out points if locked */
+.locked .points {
+    color: #444;
+}

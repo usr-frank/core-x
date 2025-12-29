@@ -18,6 +18,7 @@
             {% for ach in player.achievements %}
             <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
                 <div class="icon">{{ ach.icon }}</div>
+                
                 <div style="flex-grow: 1;">
                     <span class="title">{{ ach.name }}</span>
                     <span class="desc">{{ ach.description }}</span>
@@ -30,6 +31,9 @@
                         <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
                     {% endif %}
                 </div>
+
+                <div class="points">100 G</div>
+
             </div>
             {% endfor %}
         </div>

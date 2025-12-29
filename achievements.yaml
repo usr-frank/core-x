@@ -19,3 +19,31 @@ achievements:
     stat_key: "minecraft:play_time"
     threshold: 24000
     icon: "⏳"
+
+  - id: FIRST_STEPS
+    name: "Baby Steps"
+    description: "Walk your first block."
+    stat_key: "minecraft:walk_one_cm"
+    threshold: 100
+    icon: "🦶"
+
+  - id: BENCHWARMER
+    name: "Benchwarmer"
+    description: "Craft your first Workbench."
+    stat_key: "minecraft:crafted:minecraft:crafting_table"
+    threshold: 1
+    icon: "🪚"
+
+  - id: GETTING_UPGRADE
+    name: "Getting an Upgrade"
+    description: "Craft a Wooden Pickaxe."
+    stat_key: "minecraft:crafted:minecraft:wooden_pickaxe"
+    threshold: 1
+    icon: "⛏️"
+
+  - id: MONSTER_HUNTER
+    name: "Monster Hunter"
+    description: "Kill your first mob."
+    stat_key: "minecraft:mob_kills"
+    threshold: 1
+    icon: "⚔️"
