@@ -1,6 +1,9 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template, render_template_string
 import sqlite3
-import os  # <--- This was missing!
+import os
+import threading
+from scanner import run_loop
+from init_db import init_system
 
 app = Flask(__name__)
 # Get DB path from Docker environment, or default to local file
@@ -31,73 +34,89 @@ def index():
     
     dashboard_data = []
     for p in players:
+        # Get Unlocked Achievements
         unlocks = conn.execute('''
-            SELECT d.name, d.description, d.icon, u.unlocked_at 
+            SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold
             FROM unlocks u
             JOIN definitions d ON u.achievement_id = d.id
             WHERE u.player_uuid = ?
             ORDER BY u.unlocked_at DESC
         ''', (p['uuid'],)).fetchall()
         
+        unlocked_ids = {u['id'] for u in unlocks}
+
+        # Get Progress for Locked Achievements
+        # Prepare parameters: First is the UUID, then the list of IDs to exclude
+        params = [p['uuid']]
+        if unlocked_ids:
+            params.extend(unlocked_ids)
+        else:
+            params.append('') # Dummy value to satisfy the '?' if list is empty
+
+        progress_rows = conn.execute('''
+            SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold
+            FROM definitions d
+            LEFT JOIN player_progress pp ON d.id = pp.achievement_id AND pp.player_uuid = ?
+            WHERE d.id NOT IN ({seq})
+        '''.format(seq=','.join(['?']*len(unlocked_ids)) if unlocked_ids else '?'),
+        tuple(params)).fetchall()
+
+        processed_unlocks = []
+        for u in unlocks:
+            processed_unlocks.append({
+                "name": u['name'],
+                "description": u['description'],
+                "icon": u['icon'],
+                "unlocked_at": u['unlocked_at'],
+                "is_unlocked": True,
+                "progress": 100,
+                "current": u['threshold'],
+                "total": u['threshold']
+            })
+
+        processed_progress = []
+        for pr in progress_rows:
+            current = pr['current_value'] if pr['current_value'] else 0
+            percent = min(100, int((current / pr['threshold']) * 100))
+            processed_progress.append({
+                "name": pr['name'],
+                "description": pr['description'],
+                "icon": pr['icon'],
+                "is_unlocked": False,
+                "progress": percent,
+                "current": current,
+                "total": pr['threshold']
+            })
+
+        # Combine, maybe sort by progress?
+        # For now, let's just list unlocks first, then progress
+        all_achievements = processed_unlocks + processed_progress
+
         dashboard_data.append({
             "name": p['gamertag'] if p['gamertag'] else p['uuid'][:8],
             "score": p['score'] * 100,
-            "unlocks": unlocks
+            "achievements": all_achievements
         })
     
     conn.close()
     
-    html = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>CORE-X | Dashboard</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            body { background-color: #0f0f12; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
-            .container { max_width: 800px; margin: 0 auto; }
-            h1 { letter-spacing: 4px; border-bottom: 2px solid #00ce7c; padding-bottom: 15px; color: #fff; text-transform: uppercase; font-size: 1.5rem; }
-            .player-card { background: #18181b; padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-            .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-            .gamertag { font-size: 1.5em; font-weight: bold; color: #fff; }
-            .gs { color: #00ce7c; font-weight: bold; background: rgba(0, 206, 124, 0.1); padding: 5px 10px; border-radius: 4px; }
-            .achievement { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid #27272a; }
-            .icon { font-size: 2.5em; margin-right: 20px; width: 50px; text-align: center; }
-            .title { font-weight: bold; color: #ddd; display: block; }
-            .desc { font-size: 0.9em; color: #888; }
-            .date { font-size: 0.75em; color: #555; display: block; margin-top: 4px; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Core-X // Vanguard</h1>
-            {% for player in data %}
-            <div class="player-card">
-                <div class="header">
-                    <div class="gamertag">{{ player.name }}</div>
-                    <div class="gs">{{ player.score }} G</div>
-                </div>
-                {% for ach in player.unlocks %}
-                <div class="achievement">
-                    <div class="icon">{{ ach.icon }}</div>
-                    <div>
-                        <span class="title">{{ ach.name }}</span>
-                        <span class="desc">{{ ach.description }}</span>
-                        <span class="date">{{ ach.unlocked_at }}</span>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% endfor %}
-            
-            {% if not data %}
-            <p>System Online. Waiting for player data...</p>
-            {% endif %}
-        </div>
-    </body>
-    </html>
-    """
-    return render_template_string(html, data=dashboard_data)
+    return render_template('index.html', data=dashboard_data)
+
+def start_scanner():
+    """Starts the background scanner thread"""
+    scanner_thread = threading.Thread(target=run_loop, daemon=True)
+    scanner_thread.start()
 
 if __name__ == '__main__':
+    # 1. Initialize Database on Startup
+    if not os.path.exists(DB_NAME):
+        init_system()
+    else:
+        # Also run init to ensure schema updates (like new tables) are applied
+        init_system()
+
+    # 2. Start the Background Scanner
+    start_scanner()
+
+    # 3. Run the Web Server
     app.run(host='0.0.0.0', port=5000)

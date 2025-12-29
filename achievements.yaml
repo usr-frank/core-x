@@ -1,0 +1,21 @@
+achievements:
+  - id: FIRST_BLOOD
+    name: "You Died."
+    description: "Succumb to the harsh reality."
+    stat_key: "minecraft:deaths"
+    threshold: 1
+    icon: "💀"
+
+  - id: GRAVITY_TESTER
+    name: "Leg Day"
+    description: "Jump 10 times."
+    stat_key: "minecraft:jump"
+    threshold: 10
+    icon: "🦘"
+
+  - id: TIME_TRAVELER
+    name: "Survivor"
+    description: "Play for 1 full day (20 mins)."
+    stat_key: "minecraft:play_time"
+    threshold: 24000
+    icon: "⏳"
