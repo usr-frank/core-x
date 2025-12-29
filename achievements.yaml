@@ -5,6 +5,7 @@ achievements:
     stat_key: "minecraft:deaths"
     threshold: 1
     icon: "💀"
+    points: 10
 
   - id: GRAVITY_TESTER
     name: "Leg Day"
@@ -12,6 +13,7 @@ achievements:
     stat_key: "minecraft:jump"
     threshold: 10
     icon: "🦘"
+    points: 20
 
   - id: TIME_TRAVELER
     name: "Survivor"
@@ -19,6 +21,7 @@ achievements:
     stat_key: "minecraft:play_time"
     threshold: 24000
     icon: "⏳"
+    points: 100
 
   - id: FIRST_STEPS
     name: "Baby Steps"
@@ -26,6 +29,7 @@ achievements:
     stat_key: "minecraft:walk_one_cm"
     threshold: 100
     icon: "🦶"
+    points: 10
 
   - id: BENCHWARMER
     name: "Benchwarmer"
@@ -33,6 +37,7 @@ achievements:
     stat_key: "minecraft:crafted:minecraft:crafting_table"
     threshold: 1
     icon: "🪚"
+    points: 15
 
   - id: GETTING_UPGRADE
     name: "Getting an Upgrade"
@@ -40,6 +45,7 @@ achievements:
     stat_key: "minecraft:crafted:minecraft:wooden_pickaxe"
     threshold: 1
     icon: "⛏️"
+    points: 25
 
   - id: MONSTER_HUNTER
     name: "Monster Hunter"
@@ -47,3 +53,4 @@ achievements:
     stat_key: "minecraft:mob_kills"
     threshold: 1
     icon: "⚔️"
+    points: 50

@@ -13,7 +13,7 @@
         <div class="player-card">
             <div class="header">
                 <div class="gamertag">{{ player.name }}</div>
-                <div class="gs">{{ player.score }} G</div>
+                <div class="gs">{{ player.score }} G <span style="font-size: 0.6em; color: #888;">({{ player.rank }})</span></div>
             </div>
             {% for ach in player.achievements %}
             <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
@@ -32,7 +32,7 @@
                     {% endif %}
                 </div>
 
-                <div class="points">100 G</div>
+                <div class="points">{{ ach.points }} G</div>
 
             </div>
             {% endfor %}

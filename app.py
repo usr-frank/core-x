@@ -14,6 +14,16 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def get_player_rank(score):
+    if score >= 2000:
+        return "Warlord"
+    elif score >= 1000:
+        return "Veteran"
+    elif score >= 500:
+        return "Scout"
+    else:
+        return "Recruit"
+
 @app.route('/')
 def index():
     conn = get_db_connection()
@@ -23,10 +33,11 @@ def index():
         SELECT 
             p.gamertag, 
             p.uuid,
-            COUNT(u.achievement_id) as score,
-            (SELECT COUNT(*) FROM definitions) as total_possible
+            COALESCE(SUM(d.points), 0) as score,
+            (SELECT SUM(points) FROM definitions) as total_possible
         FROM players p
         LEFT JOIN unlocks u ON p.uuid = u.player_uuid
+        LEFT JOIN definitions d ON u.achievement_id = d.id
         GROUP BY p.uuid
         ORDER BY score DESC
     '''
@@ -36,7 +47,7 @@ def index():
     for p in players:
         # Get Unlocked Achievements
         unlocks = conn.execute('''
-            SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold
+            SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold, d.points
             FROM unlocks u
             JOIN definitions d ON u.achievement_id = d.id
             WHERE u.player_uuid = ?
@@ -54,7 +65,7 @@ def index():
             params.append('') # Dummy value to satisfy the '?' if list is empty
 
         progress_rows = conn.execute('''
-            SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold
+            SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold, d.points
             FROM definitions d
             LEFT JOIN player_progress pp ON d.id = pp.achievement_id AND pp.player_uuid = ?
             WHERE d.id NOT IN ({seq})
@@ -71,7 +82,8 @@ def index():
                 "is_unlocked": True,
                 "progress": 100,
                 "current": u['threshold'],
-                "total": u['threshold']
+                "total": u['threshold'],
+                "points": u['points']
             })
 
         processed_progress = []
@@ -85,7 +97,8 @@ def index():
                 "is_unlocked": False,
                 "progress": percent,
                 "current": current,
-                "total": pr['threshold']
+                "total": pr['threshold'],
+                "points": pr['points']
             })
 
         # Combine, maybe sort by progress?
@@ -94,7 +107,8 @@ def index():
 
         dashboard_data.append({
             "name": p['gamertag'] if p['gamertag'] else p['uuid'][:8],
-            "score": p['score'] * 100,
+            "score": p['score'],
+            "rank": get_player_rank(p['score']),
             "achievements": all_achievements
         })
     
