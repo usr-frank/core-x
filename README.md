@@ -41,7 +41,16 @@ achievements:
     stat_key: "minecraft:mined:minecraft:stone"
     threshold: 1000
     icon: "⛏️"
+    points: 50
 ```
+*Note: If `points` is omitted, it defaults to 50 G.*
+
+### 4. Player Ranks
+Players are assigned a rank based on their Total Gamerscore:
+* **Recruit:** 0+ G
+* **Scout:** 500+ G
+* **Veteran:** 1000+ G
+* **Warlord:** 2000+ G
 
 ### 4. Ignite
 ```bash

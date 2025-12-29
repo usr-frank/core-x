@@ -21,7 +21,8 @@ def init_system():
         description TEXT,
         stat_key TEXT NOT NULL,
         threshold INTEGER NOT NULL,
-        icon TEXT
+        icon TEXT,
+        points INTEGER DEFAULT 50
     )
     ''')
     
@@ -71,18 +72,20 @@ def init_system():
                 ach['description'],
                 ach['stat_key'],
                 ach['threshold'],
-                ach['icon']
+                ach['icon'],
+                ach.get('points', 50)
             ))
 
         cursor.executemany('''
-        INSERT INTO definitions (id, name, description, stat_key, threshold, icon)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO definitions (id, name, description, stat_key, threshold, icon, points)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
             name=excluded.name,
             description=excluded.description,
             stat_key=excluded.stat_key,
             threshold=excluded.threshold,
-            icon=excluded.icon
+            icon=excluded.icon,
+            points=excluded.points
         ''', achievements_data)
     else:
         print(f"⚠️  Warning: {ACHIEVEMENTS_PATH} not found. Skipping seed.")
