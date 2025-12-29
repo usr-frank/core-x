@@ -1,28 +1,4 @@
 achievements:
-  - id: FIRST_BLOOD
-    name: "You Died."
-    description: "Succumb to the harsh reality."
-    stat_key: "minecraft:deaths"
-    threshold: 1
-    icon: "💀"
-    points: 10
-
-  - id: GRAVITY_TESTER
-    name: "Leg Day"
-    description: "Jump 10 times."
-    stat_key: "minecraft:jump"
-    threshold: 10
-    icon: "🦘"
-    points: 20
-
-  - id: TIME_TRAVELER
-    name: "Survivor"
-    description: "Play for 1 full day (20 mins)."
-    stat_key: "minecraft:play_time"
-    threshold: 24000
-    icon: "⏳"
-    points: 100
-
   - id: FIRST_STEPS
     name: "Baby Steps"
     description: "Walk your first block."
@@ -37,7 +13,7 @@ achievements:
     stat_key: "minecraft:crafted:minecraft:crafting_table"
     threshold: 1
     icon: "🪚"
-    points: 15
+    points: 20
 
   - id: GETTING_UPGRADE
     name: "Getting an Upgrade"
@@ -45,7 +21,7 @@ achievements:
     stat_key: "minecraft:crafted:minecraft:wooden_pickaxe"
     threshold: 1
     icon: "⛏️"
-    points: 25
+    points: 30
 
   - id: MONSTER_HUNTER
     name: "Monster Hunter"
@@ -53,4 +29,12 @@ achievements:
     stat_key: "minecraft:mob_kills"
     threshold: 1
     icon: "⚔️"
-    points: 50
+    points: 100
+
+  - id: TIME_TRAVELER
+    name: "Survivor"
+    description: "Play for 1 full day (20 mins)."
+    stat_key: "minecraft:play_time"
+    threshold: 24000
+    icon: "⏳"
+    points: 500
