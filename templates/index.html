@@ -8,7 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Core-X // Vanguard</h1>
+        <!-- Main Header Refactor -->
+        <div class="main-header">
+            <h1>Core-X // Vanguard</h1>
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">Switch to Aether</button>
+        </div>
 
         <!-- Server Status Widget -->
         <div class="status-widget">
@@ -31,7 +35,11 @@
         {% for player in data %}
         <div class="player-card">
             <div class="header">
-                <div class="gamertag">{{ player.name }}</div>
+                <div class="player-identity">
+                    <!-- Rank Icon -->
+                    <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
+                    <div class="gamertag">{{ player.name }}</div>
+                </div>
                 <div class="gs">{{ player.score }} G</div>
             </div>
 
@@ -78,5 +86,34 @@
         <p>System Online. Waiting for player data...</p>
         {% endif %}
     </div>
+
+    <script>
+        // Theme Switcher Logic
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+
+            body.classList.toggle('aether-theme');
+
+            if (body.classList.contains('aether-theme')) {
+                localStorage.setItem('theme', 'aether');
+                btn.textContent = 'Switch to Nether';
+            } else {
+                localStorage.setItem('theme', 'nether');
+                btn.textContent = 'Switch to Aether';
+            }
+        }
+
+        // Apply saved theme on load
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const btn = document.getElementById('themeToggle');
+
+            if (savedTheme === 'aether') {
+                document.body.classList.add('aether-theme');
+                if (btn) btn.textContent = 'Switch to Nether';
+            }
+        })();
+    </script>
 </body>
 </html>

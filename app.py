@@ -84,6 +84,7 @@ def get_player_rank(score):
     if score >= 2000:
         return {
             "current_title": "Warlord",
+            "image_path": "static/ranks/warlord.svg",
             "next_title": "Max Rank",
             "progress_percent": 100,
             "current_score": score,
@@ -96,6 +97,7 @@ def get_player_rank(score):
         progress = int(((score - min_s) / (max_s - min_s)) * 100)
         return {
             "current_title": "Veteran",
+            "image_path": "static/ranks/veteran.svg",
             "next_title": "Warlord",
             "progress_percent": progress,
             "current_score": score,
@@ -108,6 +110,7 @@ def get_player_rank(score):
         progress = int(((score - min_s) / (max_s - min_s)) * 100)
         return {
             "current_title": "Scout",
+            "image_path": "static/ranks/scout.svg",
             "next_title": "Veteran",
             "progress_percent": progress,
             "current_score": score,
@@ -120,6 +123,7 @@ def get_player_rank(score):
         progress = int(((score - min_s) / (max_s - min_s)) * 100)
         return {
             "current_title": "Recruit",
+            "image_path": "static/ranks/recruit.svg",
             "next_title": "Scout",
             "progress_percent": progress,
             "current_score": score,
