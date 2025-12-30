@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Server Status Widget -->
 <div class="status-widget">
     <span class="status-label">Server Status:</span>
     <span class="status-value {% if 'Online' in server_status %}online{% else %}offline{% endif %}">
@@ -15,7 +14,6 @@
     </span>
 </div>
 
-<!-- Global Server Rank (Era Bar) -->
 <div class="era-section">
     <div class="era-header">
         <span class="era-title">Current Era: {{ server_era.name }}</span>
@@ -25,7 +23,6 @@
     </div>
 </div>
 
-<!-- Search Bar -->
 <div class="search-container">
     <form action="{{ url_for('index') }}" method="get">
         <input type="text" name="q" class="search-input" placeholder="Search Player..." value="{{ search_query }}">
@@ -36,17 +33,10 @@
 <div class="player-card">
     <div class="header" onclick="toggleAccordion(this)">
         <div class="player-identity">
-            <!-- Rank Icon -->
             <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
 
-            <a href="{{ url_for('player_profile', uuid=player.uuid if player.uuid else '') }}"
-               class="gamertag"
-               style="text-decoration: none;"
-               onclick="event.stopPropagation()">
-               {{ player.name }}
-            </a>
+            <a href="{{ url_for('player_profile', uuid=player.uuid) }}" class="gamertag" onclick="event.stopPropagation()">{{ player.name }}</a>
 
-            <!-- Ironman Status -->
             {% if player.deaths is defined %}
                 {% if player.deaths == 0 %}
                     <span class="ironman-icon" title="Ironman: 0 Deaths">❤️</span>
@@ -63,7 +53,6 @@
     </div>
 
     <div class="achievement-list">
-        <!-- Rank Progress Bar -->
         <div class="rank-section">
             <div class="rank-text">
                 Rank: {{ player.rank.current_title }}
@@ -107,7 +96,6 @@
 <p>No players found.</p>
 {% endif %}
 
-<!-- Pagination Controls -->
 {% if total_pages > 1 %}
 <div class="pagination">
     {% if current_page > 1 %}
@@ -128,13 +116,9 @@
 
 <script>
     function toggleAccordion(header) {
-        // Toggle chevron
         const chevron = header.querySelector('.chevron');
         chevron.classList.toggle('rotated');
-
-        // Toggle content
         const content = header.nextElementSibling;
-
         if (content.style.maxHeight) {
             content.style.maxHeight = null;
             content.classList.remove('expanded');

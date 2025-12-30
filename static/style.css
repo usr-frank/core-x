@@ -638,3 +638,13 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
         text-align: center;
     }
 }
+
+/* Fix for Gamertag Link */
+a.gamertag {
+    text-decoration: none;
+    color: var(--text-header);
+    transition: color 0.2s ease;
+}
+a.gamertag:hover {
+    color: var(--accent-color);
+}
