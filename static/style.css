@@ -381,3 +381,42 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     padding: 8px 12px;
     color: var(--text-secondary);
 }
+
+/* === MOBILE RESPONSIVENESS PATCH === */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    /* Shrink the huge rank icon */
+    .rank-emblem {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    /* Scale down text and truncate long names */
+    .gamertag {
+        font-size: 1.1rem;
+        max-width: 140px; /* Force cutoff for long names */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Fix the Score Badge squashing */
+    .gs {
+        font-size: 0.85rem;
+        padding: 4px 8px;
+        white-space: nowrap; /* CRITICAL: Keeps "4200 G" on one line */
+    }
+
+    /* Tighten the layout gaps */
+    .header {
+        gap: 10px;
+    }
+    
+    .chevron {
+        margin-left: 5px;
+    }
+}
