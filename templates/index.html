@@ -25,16 +25,23 @@
     </div>
 </div>
 
+<!-- Search Bar -->
+<div class="search-container">
+    <form action="{{ url_for('index') }}" method="get">
+        <input type="text" name="q" class="search-input" placeholder="Search Player..." value="{{ search_query }}">
+    </form>
+</div>
+
 {% for player in data %}
 <div class="player-card">
-    <div class="header">
+    <div class="header" onclick="toggleAccordion(this)">
         <div class="player-identity">
             <!-- Rank Icon -->
             <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
 
             <div class="gamertag">{{ player.name }}</div>
 
-            <!-- Ironman Status (To be implemented in app.py logic) -->
+            <!-- Ironman Status -->
             {% if player.deaths is defined %}
                 {% if player.deaths == 0 %}
                     <span class="ironman-icon" title="Ironman: 0 Deaths">❤️</span>
@@ -43,49 +50,93 @@
                 {% endif %}
             {% endif %}
         </div>
-        <div class="gs">{{ player.score }} G</div>
-    </div>
 
-    <!-- Rank Progress Bar -->
-    <div class="rank-section">
-        <div class="rank-text">
-            Rank: {{ player.rank.current_title }}
-            {% if player.rank.next_rank_score %}
-            -> {{ player.rank.next_title }} ({{ player.score }}/{{ player.rank.next_rank_score }})
-            {% else %}
-            (Max Rank)
-            {% endif %}
-        </div>
-        <div class="rank-progress-container">
-            <div class="rank-progress-bar" style="width: {{ player.rank.progress_percent }}%;"></div>
+        <div style="display: flex; align-items: center;">
+            <div class="gs">{{ player.score }} G</div>
+            <span class="chevron">▼</span>
         </div>
     </div>
 
-    {% for ach in player.achievements %}
-    <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
-        <div class="icon">{{ ach.icon }}</div>
-
-        <div style="flex-grow: 1;">
-            <span class="title">{{ ach.name }}</span>
-            <span class="desc">{{ ach.description }}</span>
-            {% if ach.is_unlocked %}
-                <span class="date">Unlocked: {{ ach.unlocked_at }}</span>
-            {% else %}
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: {{ ach.progress }}%;"></div>
-                </div>
-                <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
-            {% endif %}
+    <div class="achievement-list">
+        <!-- Rank Progress Bar -->
+        <div class="rank-section">
+            <div class="rank-text">
+                Rank: {{ player.rank.current_title }}
+                {% if player.rank.next_rank_score %}
+                -> {{ player.rank.next_title }} ({{ player.score }}/{{ player.rank.next_rank_score }})
+                {% else %}
+                (Max Rank)
+                {% endif %}
+            </div>
+            <div class="rank-progress-container">
+                <div class="rank-progress-bar" style="width: {{ player.rank.progress_percent }}%;"></div>
+            </div>
         </div>
 
-        <div class="points">{{ ach.points }} G</div>
+        {% for ach in player.achievements %}
+        <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
+            <div class="icon">{{ ach.icon }}</div>
 
+            <div style="flex-grow: 1;">
+                <span class="title">{{ ach.name }}</span>
+                <span class="desc">{{ ach.description }}</span>
+                {% if ach.is_unlocked %}
+                    <span class="date">Unlocked: {{ ach.unlocked_at }}</span>
+                {% else %}
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ ach.progress }}%;"></div>
+                    </div>
+                    <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
+                {% endif %}
+            </div>
+
+            <div class="points">{{ ach.points }} G</div>
+
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endfor %}
 
 {% if not data %}
-<p>System Online. Waiting for player data...</p>
+<p>No players found.</p>
 {% endif %}
+
+<!-- Pagination Controls -->
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% if current_page > 1 %}
+    <a href="{{ url_for('index', page=current_page-1, q=search_query) }}" class="page-btn">Previous</a>
+    {% else %}
+    <span class="page-btn disabled">Previous</span>
+    {% endif %}
+
+    <span class="page-info">Page {{ current_page }} of {{ total_pages }}</span>
+
+    {% if current_page < total_pages %}
+    <a href="{{ url_for('index', page=current_page+1, q=search_query) }}" class="page-btn">Next</a>
+    {% else %}
+    <span class="page-btn disabled">Next</span>
+    {% endif %}
+</div>
+{% endif %}
+
+<script>
+    function toggleAccordion(header) {
+        // Toggle chevron
+        const chevron = header.querySelector('.chevron');
+        chevron.classList.toggle('rotated');
+
+        // Toggle content
+        const content = header.nextElementSibling;
+
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            content.classList.remove('expanded');
+        } else {
+            content.classList.add('expanded');
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+</script>
 {% endblock %}
