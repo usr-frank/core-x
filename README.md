@@ -16,6 +16,7 @@ Core-X is a Dockerized Sidecar application that attaches to your Minecraft serve
 * **Configurable:** Define custom achievements via YAML.
 * **Community Hub:** Real-time Server Status and Global "Age" Progression system.
 * **Visual Flair:** Rank Emblems and a "Nether/Aether" Theme Switcher.
+* **Hall of Fame:** A Leaderboard system tracking top stats.
 
 ## 🛠 Installation
 
@@ -61,14 +62,15 @@ Users can now toggle between two visual themes, persisted locally:
 * **Nether Mode:** The classic Dark theme with green accents.
 * **Aether Mode:** A new Light theme with white cards and blue accents.
 
-### 6. Community Hub
-The dashboard now tracks global server progress through "Ages" based on the combined score of all players:
-* **Stone Age:** 0 - 4,999 G
-* **Bronze Age:** 5,000 - 9,999 G
-* **Iron Age:** 10,000 - 24,999 G
-* **Diamond Age:** 25,000+ G
-
-It also displays the current status of the Minecraft server (Online/Offline) and player count.
+### 6. Community Hub & Leaderboard (Phase 3)
+* **Global Ages:** Track server progress from Stone Age to Diamond Age.
+* **Server Status:** See online/offline status and player count.
+* **Leaderboard:** A dedicated Hall of Fame page (`/leaderboard`) tracking Top 5 in:
+    * **Bloodlust:** Most Kills.
+    * **Darwin Awards:** Most Deaths.
+    * **No Lifers:** Longest Playtime (Hours).
+    * **Marathon Runners:** Longest Distance Walked (km).
+* **Ironman Status:** Players on the dashboard display a ❤️ if they have 0 deaths, or a 💀 if they have fallen.
 
 ### 7. Ignite
 ```bash

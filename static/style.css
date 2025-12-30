@@ -68,6 +68,37 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     border-color: var(--accent-color);
 }
 
+/* Navigation Bar (Pills) */
+.nav-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.nav-pill {
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.nav-pill:hover {
+    background-color: var(--card-bg);
+    color: var(--text-header);
+    border-color: var(--text-secondary);
+}
+
+.nav-pill.active {
+    background-color: var(--accent-color);
+    color: #fff; /* Always white for contrast on accent */
+    border-color: var(--accent-color);
+}
+
+
 .player-card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px var(--shadow-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 
@@ -81,6 +112,11 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     width: 64px;
     height: 64px;
     margin-right: 15px;
+}
+
+.ironman-icon {
+    font-size: 1.5em;
+    margin-left: 10px;
 }
 
 .gamertag { font-size: 1.5em; font-weight: bold; color: var(--text-header); }
@@ -221,3 +257,57 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 .bronze-age { background-color: #cd7f32; }
 .iron-age { background-color: #e0e0e0; }
 .diamond-age { background-color: #00ced1; box-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }
+
+/* Leaderboard Grid */
+.leaderboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.leaderboard-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.category-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.rank-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.rank-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+.rank-item:last-child { border-bottom: none; }
+
+.rank-pos {
+    font-weight: bold;
+    margin-right: 10px;
+    color: var(--text-secondary);
+    min-width: 20px;
+}
+.rank-name {
+    flex-grow: 1;
+    font-weight: bold;
+}
+.rank-score {
+    color: var(--text-secondary);
+}
