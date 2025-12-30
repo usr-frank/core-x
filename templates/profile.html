@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Profile: {{ player.gamertag }}{% endblock %}
+
+{% block content %}
+<!-- Calling Card Header -->
+<div class="calling-card {{ player.era_class }}">
+    <div class="card-content">
+        <img src="{{ url_for('static', filename=player.rank.image_path.replace('static/', '')) }}" class="card-rank-icon" alt="{{ player.rank.current_title }}">
+
+        <div class="card-identity">
+            <h1 class="card-gamertag">
+                {{ player.gamertag }}
+                <!-- Ironman Status -->
+                {% if player.stats.deaths == 0 %}
+                    <span class="card-ironman" title="Ironman: 0 Deaths">❤️</span>
+                {% else %}
+                    <span class="card-ironman" title="Fallen: {{ player.stats.deaths }} Deaths">💀</span>
+                {% endif %}
+            </h1>
+            <div class="card-title">{{ player.rank.current_title }}</div>
+        </div>
+
+        <div class="card-score">{{ player.score }} G</div>
+    </div>
+</div>
+
+<!-- Combat Record Grid -->
+<div class="combat-record">
+    <div class="stat-box">
+        <div class="stat-label">K/D Ratio</div>
+        <div class="stat-value">{{ player.stats.kd }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Kills</div>
+        <div class="stat-value">{{ player.stats.kills }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Deaths</div>
+        <div class="stat-value">{{ player.stats.deaths }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Time Played</div>
+        <div class="stat-value">{{ player.stats.playtime }}</div>
+    </div>
+</div>
+
+<!-- Achievements Section -->
+<h2 class="section-title">Achievements</h2>
+
+<div class="achievement-grid">
+    {% for ach in player.achievements %}
+        {% if ach.is_unlocked %}
+            <div class="medal unlocked">
+                <div class="medal-icon">{{ ach.icon }}</div>
+                <div class="medal-info">
+                    <div class="medal-name">{{ ach.name }}</div>
+                    <div class="medal-desc">{{ ach.description }}</div>
+                    <div class="medal-date">{{ ach.unlocked_at }}</div>
+                </div>
+                <div class="medal-points">{{ ach.points }} G</div>
+            </div>
+        {% else %}
+            <div class="medal locked">
+                <div class="medal-icon">{{ ach.icon }}</div>
+                <div class="medal-info">
+                    <div class="medal-name">{{ ach.name }}</div>
+                    <div class="medal-desc">{{ ach.description }}</div>
+                    <!-- Progress Bar for Locked -->
+                    <div class="medal-progress-container">
+                        <div class="medal-progress-bar" style="width: {{ ach.progress }}%;"></div>
+                    </div>
+                    <div class="medal-progress-text">{{ ach.current }} / {{ ach.total }}</div>
+                </div>
+                <div class="medal-points">{{ ach.points }} G</div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

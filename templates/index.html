@@ -39,7 +39,12 @@
             <!-- Rank Icon -->
             <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
 
-            <div class="gamertag">{{ player.name }}</div>
+            <a href="{{ url_for('player_profile', uuid=player.uuid if player.uuid else '') }}"
+               class="gamertag"
+               style="text-decoration: none;"
+               onclick="event.stopPropagation()">
+               {{ player.name }}
+            </a>
 
             <!-- Ironman Status -->
             {% if player.deaths is defined %}

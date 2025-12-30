@@ -72,12 +72,18 @@ Users can now toggle between two visual themes, persisted locally:
     * **Marathon Runners:** Longest Distance Walked (km).
 * **Ironman Status:** Players on the dashboard display a ❤️ if they have 0 deaths, or a 💀 if they have fallen.
 
-### 7. Ignite
+### 7. Player Profiles (Phase 5)
+Core-X now features detailed **Player Profiles ("The Barracks")**.
+* **Calling Cards:** Dynamic profile banners based on the player's personal "Era" (Stone, Bronze, Iron, Diamond).
+* **Combat Record:** Detailed stats grid showing K/D, Kills, Deaths, and Playtime.
+* **Full History:** A complete list of all unlocked and locked achievements with progress bars.
+
+### 8. Ignite
 ```bash
 docker compose up -d --build
 ```
 
-### 8. Verify
+### 9. Verify
 Access the dashboard at: `http://localhost:5000`
 
 ## 🏆 Default Achievements
