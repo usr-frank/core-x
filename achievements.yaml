@@ -1,4 +1,5 @@
 achievements:
+  # --- TIER 1: TUTORIAL (The Basics) ---
   - id: FIRST_STEPS
     name: "Baby Steps"
     description: "Walk your first block."
@@ -9,7 +10,7 @@ achievements:
 
   - id: BENCHWARMER
     name: "Benchwarmer"
-    description: "Craft your first Workbench."
+    description: "Craft a Crafting Table."
     stat_key: "minecraft:crafted:minecraft:crafting_table"
     threshold: 1
     icon: "🪚"
@@ -17,24 +18,131 @@ achievements:
 
   - id: GETTING_UPGRADE
     name: "Getting an Upgrade"
-    description: "Craft a Wooden Pickaxe."
-    stat_key: "minecraft:crafted:minecraft:wooden_pickaxe"
+    description: "Craft a Stone Pickaxe."
+    stat_key: "minecraft:crafted:minecraft:stone_pickaxe"
     threshold: 1
     icon: "⛏️"
     points: 30
 
-  - id: MONSTER_HUNTER
+  - id: BREAD_WINNER
+    name: "Bread Winner"
+    description: "Craft a loaf of Bread."
+    stat_key: "minecraft:crafted:minecraft:bread"
+    threshold: 1
+    icon: "🍞"
+    points: 50
+
+  # --- TIER 2: INDUSTRY (The Grind) ---
+  - id: DWARVEN_GREED
+    name: "Dwarven Greed"
+    description: "Mine 500 Stone."
+    stat_key: "minecraft:mined:minecraft:stone"
+    threshold: 500
+    icon: "⛰️"
+    points: 100
+
+  - id: IRON_BELLY
+    name: "Iron Belly"
+    description: "Mine 50 Iron Ore (Surface/Upper Caves)."
+    stat_key: "minecraft:mined:minecraft:iron_ore"
+    threshold: 50
+    icon: "🔩"
+    points: 150
+
+  - id: DIAMOND_HANDS
+    name: "Diamond Hands"
+    description: "Mine 10 Deepslate Diamond Ore."
+    stat_key: "minecraft:mined:minecraft:deepslate_diamond_ore"
+    threshold: 10
+    icon: "💎"
+    points: 300
+
+  - id: DEFORESTATION
+    name: "Logger"
+    description: "Chop down 100 logs (Oak)."
+    stat_key: "minecraft:mined:minecraft:oak_log"
+    threshold: 100
+    icon: "🪓"
+    points: 100
+
+  - id: OBSIDIAN_TEARS
+    name: "Hard as Rock"
+    description: "Mine 10 Obsidian."
+    stat_key: "minecraft:mined:minecraft:obsidian"
+    threshold: 10
+    icon: "⚫"
+    points: 150
+
+  # --- TIER 3: COMBAT (The Slayer) ---
+  - id: FIRST_BLOOD
     name: "Monster Hunter"
     description: "Kill your first mob."
     stat_key: "minecraft:mob_kills"
     threshold: 1
-    icon: "⚔️"
-    points: 100
+    icon: "🗡️"
+    points: 50
 
-  - id: TIME_TRAVELER
-    name: "Survivor"
-    description: "Play for 1 full day (20 mins)."
-    stat_key: "minecraft:play_time"
-    threshold: 24000
-    icon: "⏳"
-    points: 500
+  - id: SKELETON_WAR
+    name: "Bone Breaker"
+    description: "Kill 25 Skeletons."
+    stat_key: "minecraft:killed:minecraft:skeleton"
+    threshold: 25
+    icon: "💀"
+    points: 150
+
+  - id: ZOMBIE_SLAYER
+    name: "Walking Dead"
+    description: "Kill 50 Zombies."
+    stat_key: "minecraft:killed:minecraft:zombie"
+    threshold: 50
+    icon: "🧟"
+    points: 150
+
+  - id: CREEPER_SWEEPER
+    name: "Bomb Squad"
+    description: "Kill 10 Creepers."
+    stat_key: "minecraft:killed:minecraft:creeper"
+    threshold: 10
+    icon: "🧨"
+    points: 200
+
+  - id: ENDER_WATCHER
+    name: "Don't Look"
+    description: "Kill 5 Endermen."
+    stat_key: "minecraft:killed:minecraft:enderman"
+    threshold: 5
+    icon: "👁️"
+    points: 350
+
+  # --- TIER 4: LEGEND (High Value) ---
+  - id: MARATHON
+    name: "Forrest Gump"
+    description: "Sprint 100,000 cm (1km)."
+    stat_key: "minecraft:sprint_one_cm"
+    threshold: 100000
+    icon: "🏃"
+    points: 300
+
+  - id: NETHER_SAY_DIE
+    name: "We Need To Go Deeper"
+    description: "Mine your first Netherrack."
+    stat_key: "minecraft:mined:minecraft:netherrack"
+    threshold: 1
+    icon: "🔥"
+    points: 200
+
+  - id: ENCHANTER
+    name: "Wizard"
+    description: "Enchant 10 items."
+    stat_key: "minecraft:enchant_item"
+    threshold: 10
+    icon: "✨"
+    points: 250
+
+  - id: DRAGON_SLAYER
+    name: "The End."
+    description: "Kill the Ender Dragon."
+    stat_key: "minecraft:killed:minecraft:ender_dragon"
+    threshold: 1
+    icon: "🐲"
+    points: 1000
