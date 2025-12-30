@@ -1,35 +1,92 @@
 :root {
-    /* Nether Mode (Default) */
+    /* Fonts */
+    --font-header: 'Rajdhani', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* Nether Mode (Default / Cyberpunk) */
     --bg-color: #0f0f12;
-    --card-bg: #18181b;
+    --dot-color: rgba(255, 255, 255, 0.05);
+
+    --card-bg: rgba(24, 24, 27, 0.7);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --backdrop-filter: blur(10px);
+
     --text-main: #e0e0e0;
     --text-header: #ffffff;
     --text-secondary: #888888;
     --text-tertiary: #555555;
+
     --accent-color: #00ce7c;
     --accent-bg-alpha: rgba(0, 206, 124, 0.1);
-    --border-color: #27272a;
+
+    --border-color: #27272a; /* Keeping for fallbacks */
     --progress-track: #333333;
-    --shadow-color: rgba(0,0,0,0.3);
+    --shadow-color: rgba(0,0,0,0.5);
+
+    --neon-glow: 0 0 10px var(--accent-color);
 }
 
 .aether-theme {
-    /* Aether Mode (Light) */
+    /* Aether Mode (Light / Corporate) */
     --bg-color: #f0f8ff;
+    --dot-color: transparent;
+
     --card-bg: #ffffff;
+    --card-border: #dbe4eb;
+    --backdrop-filter: none;
+
     --text-main: #2c3e50;
     --text-header: #2c3e50;
     --text-secondary: #546e7a;
     --text-tertiary: #78909c;
+
     --accent-color: #007bff;
     --accent-bg-alpha: rgba(0, 123, 255, 0.1);
+
     --border-color: #dbe4eb;
     --progress-track: #e0e0e0;
     --shadow-color: rgba(0,0,0,0.1);
+
+    --neon-glow: none;
 }
 
-body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; transition: background-color 0.3s ease, color 0.3s ease; }
-.container { max_width: 800px; margin: 0 auto; }
+body {
+    background-color: var(--bg-color);
+    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container { max-width: 800px; margin: 0 auto; }
+
+/* Typography Mapping */
+h1, h2, h3, .main-header h1, .gamertag, .card-gamertag, .rank-text, .title, .card-title, .section-title, .category-title {
+    font-family: var(--font-header);
+    text-transform: uppercase; /* Rajdhani looks better uppercase usually, preserving existing styles */
+}
+
+.gs, .points, .stat-value, .date, .status-value, .rank-score, .medal-points {
+    font-family: var(--font-mono);
+}
+
+/* Neon Helpers & Application */
+.neon-text {
+    text-shadow: var(--neon-glow);
+}
+.neon-box {
+    box-shadow: 0 0 15px var(--accent-bg-alpha), inset 0 0 10px var(--accent-bg-alpha);
+    border-color: var(--accent-color);
+}
+
+/* Apply Neon to specific elements in Nether */
+.rank-text, .gs {
+    text-shadow: var(--neon-glow);
+}
 
 /* Main Header Refactor */
 .main-header {
@@ -43,23 +100,20 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 
 .main-header h1 {
     margin: 0;
-    border-bottom: none;
-    padding-bottom: 0;
     letter-spacing: 4px;
     color: var(--text-header);
-    text-transform: uppercase;
     font-size: 1.5rem;
 }
 
 /* Theme Toggle Button */
 .theme-toggle {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
     color: var(--text-main);
     padding: 8px 15px;
     border-radius: 20px;
     cursor: pointer;
-    font-family: inherit;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
@@ -68,42 +122,72 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     border-color: var(--accent-color);
 }
 
-/* Navigation Bar (Pills) */
+/* Navigation Bar (Tabs) */
 .nav-bar {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     margin-bottom: 25px;
+    border-bottom: 1px solid var(--card-border); /* Optional track line */
+    padding-bottom: 0;
 }
 
 .nav-pill {
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 10px 5px;
+    border-radius: 0;
     text-decoration: none;
     color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    border: none;
+    border-bottom: 2px solid transparent;
     background-color: transparent;
     transition: all 0.3s ease;
     font-weight: bold;
+    font-family: var(--font-header);
+    font-size: 1.1rem;
 }
 
 .nav-pill:hover {
-    background-color: var(--card-bg);
     color: var(--text-header);
-    border-color: var(--text-secondary);
+    background-color: transparent;
 }
 
 .nav-pill.active {
-    background-color: var(--accent-color);
-    color: #fff; /* Always white for contrast on accent */
+    background-color: transparent;
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+    box-shadow: 0 4px 10px -4px var(--accent-color);
+}
+
+/* Cards & Glassmorphism */
+.player-card, .leaderboard-card, .calling-card, .status-widget, .era-section, .stat-box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: var(--backdrop-filter);
+    -webkit-backdrop-filter: var(--backdrop-filter);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Spacing */
+.player-card, .leaderboard-card, .calling-card {
+    padding: 30px;
+    margin-bottom: 20px;
+}
+.status-widget, .era-section, .stat-box {
+    padding: 20px; /* Kept reasonable */
+}
+
+/* Hover Effects */
+.player-card:hover, .leaderboard-card:hover, .calling-card:hover {
+    transform: translateY(-5px);
     border-color: var(--accent-color);
+    box-shadow: 0 10px 20px var(--shadow-color);
 }
 
 
-.player-card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px var(--shadow-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
-
+/* Player List Internals */
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; cursor: pointer; }
 
-/* Player Identity Wrapper (Rank Icon + Gamertag) */
 .player-identity {
     display: flex;
     align-items: center;
@@ -121,198 +205,141 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 }
 
 .gamertag { font-size: 1.5em; font-weight: bold; color: var(--text-header); }
-.gs { color: var(--accent-color); font-weight: bold; background: var(--accent-bg-alpha); padding: 5px 10px; border-radius: 4px; }
+.gs {
+    color: var(--accent-color);
+    font-weight: bold;
+    background: var(--accent-bg-alpha);
+    padding: 5px 10px;
+    border-radius: 4px;
+}
 
-.achievement { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid var(--border-color); }
+.achievement { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid var(--card-border); }
 .icon { font-size: 2.5em; margin-right: 20px; width: 50px; text-align: center; }
 .title { font-weight: bold; color: var(--text-header); display: block; }
 .desc { font-size: 0.9em; color: var(--text-secondary); }
 .date { font-size: 0.75em; color: var(--text-tertiary); display: block; margin-top: 4px; }
 
-/* Progress Bar Styles */
-.progress-container {
-    width: 100%;
+/* Progress Bars (Striped Gradient) */
+.progress-container, .rank-progress-container, .era-progress-container, .medal-progress-container {
     background-color: var(--progress-track);
-    border-radius: 4px;
-    height: 8px;
-    margin-top: 8px;
     overflow: hidden;
 }
-.progress-bar {
-    height: 100%;
-    background-color: var(--accent-color);
-    transition: width 0.5s ease-in-out;
-}
-.progress-text {
-    font-size: 0.75em;
-    color: var(--text-secondary);
-    margin-top: 4px;
-    display: block;
-}
-.locked {
-    opacity: 0.6;
-}
-.locked .icon {
-    filter: grayscale(100%);
+
+.progress-bar, .rank-progress-bar, .era-progress-bar, .medal-progress-bar {
+    background-size: 1rem 1rem;
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
 }
 
-/* Points Badge */
-.points {
-    font-weight: bold;
-    color: var(--accent-color);
-    margin-left: 15px;
-    min-width: 60px;
-    text-align: right;
-    font-size: 1.1em;
-}
+.progress-container { width: 100%; border-radius: 4px; height: 8px; margin-top: 8px; }
+.progress-bar { height: 100%; background-color: var(--accent-color); transition: width 0.5s ease-in-out; }
 
-/* Gray out points if locked */
-.locked .points {
-    color: var(--text-tertiary);
-}
+.progress-text { font-size: 0.75em; color: var(--text-secondary); margin-top: 4px; display: block; }
+.locked { opacity: 0.6; }
+.locked .icon { filter: grayscale(100%); }
+
+.points { font-weight: bold; color: var(--accent-color); margin-left: 15px; min-width: 60px; text-align: right; font-size: 1.1em; }
+.locked .points { color: var(--text-tertiary); }
 
 /* Rank Progress Bar */
-.rank-section {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-.rank-text {
-    font-weight: bold;
-    color: #FFD700;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-}
-.rank-progress-container {
-    width: 100%;
-    background-color: var(--progress-track);
-    border-radius: 4px;
-    height: 12px;
-    overflow: hidden;
-}
-.rank-progress-bar {
-    height: 100%;
-    background-color: #FFD700;
-    transition: width 0.5s ease-in-out;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
+.rank-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--card-border); }
+.rank-text { font-weight: bold; color: #FFD700; margin-bottom: 8px; font-size: 1.1em; }
+.rank-progress-container { width: 100%; border-radius: 4px; height: 12px; }
+.rank-progress-bar { height: 100%; background-color: #FFD700; transition: width 0.5s ease-in-out; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
 /* Server Status Widget */
 .status-widget {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 8px;
     margin-bottom: 20px;
-    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-.status-label {
-    font-weight: bold;
-    color: var(--text-secondary);
-}
-.status-value {
-    font-weight: bold;
-}
-.status-value.online {
-    color: var(--accent-color);
-}
-.status-value.offline {
-    color: #ef4444;
-}
+.status-label { font-weight: bold; color: var(--text-secondary); }
+.status-value.online { color: var(--accent-color); }
+.status-value.offline { color: #ef4444; }
 
 /* Global Era Bar */
-.era-section {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    border: 1px solid var(--border-color);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-.era-header {
-    margin-bottom: 10px;
-}
-.era-title {
-    font-weight: bold;
-    color: var(--text-header);
-    font-size: 1.1em;
-}
-.era-progress-container {
-    width: 100%;
-    background-color: var(--progress-track);
-    border-radius: 6px;
-    height: 24px;
-    overflow: hidden;
-    position: relative;
-}
-.era-progress-bar {
-    height: 100%;
-    transition: width 0.5s ease-in-out;
-}
+.era-section { margin-bottom: 30px; }
+.era-header { margin-bottom: 10px; }
+.era-title { font-weight: bold; color: var(--text-header); font-size: 1.1em; }
+.era-progress-container { width: 100%; border-radius: 6px; height: 24px; position: relative; }
+.era-progress-bar { height: 100%; transition: width 0.5s ease-in-out; }
 
-/* Era Colors - GLOBAL BAR */
 .stone-age { background-color: #757575; }
 .bronze-age { background-color: #cd7f32; }
 .iron-age { background-color: #e0e0e0; }
 .diamond-age { background-color: #00ced1; box-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }
 
-/* --- CALLING CARD STYLES --- */
+/* --- CALLING CARD HERO (Modified) --- */
 .calling-card {
-    border-radius: 12px;
-    padding: 30px;
-    margin-bottom: 25px;
+    min-height: 250px;
     color: #fff;
     box-shadow: 0 8px 16px rgba(0,0,0,0.4);
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-size: 200% 200%;
+    animation: gradientPan 15s ease infinite;
 }
 
-.calling-card.stone-age { background: linear-gradient(45deg, #3a3a3a, #1a1a1a); }
-.calling-card.bronze-age { background: linear-gradient(45deg, #cd7f32, #8b4513); }
-.calling-card.iron-age { background: linear-gradient(45deg, #bdc3c7, #2c3e50); }
-.calling-card.diamond-age {
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
-    animation: diamondPulse 8s infinite alternate;
+@keyframes gradientPan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-@keyframes diamondPulse {
-    0% { filter: brightness(1); }
-    100% { filter: brightness(1.2); }
-}
+/* Gradients for Eras */
+.calling-card.stone-age { background-image: linear-gradient(45deg, #3a3a3a, #1a1a1a, #555); }
+.calling-card.bronze-age { background-image: linear-gradient(45deg, #cd7f32, #8b4513, #e6a35c); }
+.calling-card.iron-age { background-image: linear-gradient(45deg, #bdc3c7, #2c3e50, #eee); }
+.calling-card.diamond-age { background-image: linear-gradient(45deg, #00c6ff, #0072ff, #00ffff); }
 
 .card-content {
     display: flex;
     align-items: center;
+    flex-direction: column; /* Centered Layout */
     position: relative;
     z-index: 2;
+    text-align: center;
 }
 
 .card-rank-icon {
     width: 80px;
     height: 80px;
-    margin-right: 25px;
+    margin: 0 0 15px 0; /* Centered, bottom margin */
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
 }
 
 .card-identity {
     flex-grow: 1;
+    margin-bottom: 15px;
 }
 
 .card-gamertag {
-    font-size: 2.2em;
+    font-size: 2.5em;
     font-weight: 800;
     margin: 0;
     line-height: 1;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .card-title {
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: 600;
     opacity: 0.9;
     margin-top: 5px;
@@ -327,11 +354,11 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     padding: 10px 20px;
     border-radius: 8px;
     backdrop-filter: blur(5px);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .card-ironman {
     font-size: 0.8em;
-    margin-left: 15px;
 }
 
 /* --- COMBAT RECORD GRID --- */
@@ -343,12 +370,7 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 }
 
 .stat-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 20px;
-    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .stat-label {
@@ -357,6 +379,7 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 5px;
+    font-family: var(--font-header);
 }
 
 .stat-value {
@@ -382,7 +405,7 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 
 .medal {
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 15px;
     display: flex;
@@ -395,7 +418,7 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 }
 .medal.locked {
     opacity: 0.7;
-    background: var(--bg-color);
+    background: transparent; /* Cleaner on dark */
 }
 
 .medal-icon {
@@ -408,58 +431,16 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     filter: grayscale(100%);
 }
 
-.medal-info {
-    flex-grow: 1;
-}
+.medal-info { flex-grow: 1; }
+.medal-name { font-weight: bold; color: var(--text-header); font-size: 1.1em; font-family: var(--font-header); }
+.medal-desc { color: var(--text-secondary); font-size: 0.9em; }
+.medal-date { color: var(--accent-color); font-size: 0.8em; margin-top: 5px; }
+.medal-points { font-weight: bold; color: var(--text-tertiary); font-size: 1.2em; margin-left: 15px; }
+.medal.unlocked .medal-points { color: var(--accent-color); }
 
-.medal-name {
-    font-weight: bold;
-    color: var(--text-header);
-    font-size: 1.1em;
-}
-
-.medal-desc {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-}
-
-.medal-date {
-    color: var(--accent-color);
-    font-size: 0.8em;
-    margin-top: 5px;
-}
-
-.medal-points {
-    font-weight: bold;
-    color: var(--text-tertiary); /* Default for locked */
-    font-size: 1.2em;
-    margin-left: 15px;
-}
-.medal.unlocked .medal-points {
-    color: var(--accent-color);
-}
-
-.medal-progress-container {
-    width: 100%;
-    background-color: var(--progress-track);
-    border-radius: 4px;
-    height: 6px;
-    margin-top: 8px;
-    overflow: hidden;
-    max-width: 200px;
-}
-
-.medal-progress-bar {
-    height: 100%;
-    background-color: var(--text-secondary);
-    transition: width 0.5s ease-in-out;
-}
-
-.medal-progress-text {
-    font-size: 0.75em;
-    color: var(--text-tertiary);
-    margin-top: 2px;
-}
+.medal-progress-container { width: 100%; background-color: var(--progress-track); border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden; max-width: 200px; }
+.medal-progress-bar { height: 100%; background-color: var(--text-secondary); transition: width 0.5s ease-in-out; }
+.medal-progress-text { font-size: 0.75em; color: var(--text-tertiary); margin-top: 2px; }
 
 
 /* Leaderboard Grid */
@@ -469,21 +450,13 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     gap: 20px;
 }
 
-.leaderboard-card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px var(--shadow-color);
-}
-
 .category-title {
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--accent-color);
     margin-bottom: 15px;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--card-border);
     padding-bottom: 10px;
 }
 
@@ -496,155 +469,81 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 .rank-item {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border-color);
+    padding: 12px;
+    margin-bottom: 10px; /* Floating blocks */
+    background: rgba(0,0,0,0.2); /* Slight contrast for blocks */
+    border-radius: 8px;
     color: var(--text-main);
 }
-.rank-item:last-child { border-bottom: none; }
+.rank-item:last-child { margin-bottom: 0; }
 
-.rank-pos {
-    font-weight: bold;
-    margin-right: 10px;
-    color: var(--text-secondary);
-    min-width: 20px;
-}
-.rank-name {
-    flex-grow: 1;
-    font-weight: bold;
-}
-.rank-score {
-    color: var(--text-secondary);
-}
+.rank-pos { font-weight: bold; margin-right: 10px; color: var(--text-secondary); min-width: 20px; font-family: var(--font-mono); }
+.rank-name { flex-grow: 1; font-weight: bold; font-family: var(--font-header); }
+.rank-score { color: var(--text-secondary); font-family: var(--font-mono); }
 
 /* Search Bar */
-.search-container {
-    margin-bottom: 20px;
-}
+.search-container { margin-bottom: 20px; }
 .search-input {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
     box-sizing: border-box;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     background-color: var(--card-bg);
     color: var(--text-main);
     font-size: 1rem;
+    font-family: var(--font-body);
     transition: border 0.3s;
 }
 .search-input:focus {
     border-color: var(--accent-color);
     outline: none;
+    box-shadow: 0 0 10px var(--accent-bg-alpha);
 }
 
 /* Accordion & Chevron */
-.chevron {
-    transition: transform 0.3s ease;
-    margin-left: 10px;
-    color: var(--text-secondary);
-}
-.chevron.rotated {
-    transform: rotate(180deg);
-}
-.achievement-list {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    opacity: 0;
-}
-.achievement-list.expanded {
-    opacity: 1;
-}
+.chevron { transition: transform 0.3s ease; margin-left: 10px; color: var(--text-secondary); }
+.chevron.rotated { transform: rotate(180deg); }
+.achievement-list { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; opacity: 0; }
+.achievement-list.expanded { opacity: 1; }
 
 /* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 30px;
-}
+.pagination { display: flex; justify-content: center; gap: 10px; margin-top: 30px; }
 .page-btn {
     padding: 8px 16px;
     text-decoration: none;
     color: var(--text-main);
     background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
     border-radius: 4px;
     transition: all 0.3s ease;
 }
-.page-btn:hover {
-    background: var(--accent-bg-alpha);
-    border-color: var(--accent-color);
-}
-.page-btn.disabled {
-    opacity: 0.5;
-    pointer-events: none;
-}
-.page-info {
-    padding: 8px 12px;
-    color: var(--text-secondary);
-}
+.page-btn:hover { background: var(--accent-bg-alpha); border-color: var(--accent-color); }
+.page-btn.disabled { opacity: 0.5; pointer-events: none; }
+.page-info { padding: 8px 12px; color: var(--text-secondary); }
 
 /* === MOBILE RESPONSIVENESS PATCH === */
 @media (max-width: 600px) {
-    .container {
-        padding: 10px;
-    }
-
-    /* Shrink the huge rank icon */
-    .rank-emblem {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-    }
-
-    /* Scale down text and truncate long names */
-    .gamertag {
-        font-size: 1.1rem;
-        max-width: 140px; /* Force cutoff for long names */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    /* Fix the Score Badge squashing */
-    .gs {
-        font-size: 0.85rem;
-        padding: 4px 8px;
-        white-space: nowrap; /* CRITICAL: Keeps "4200 G" on one line */
-    }
-
-    /* Tighten the layout gaps */
-    .header {
-        gap: 10px;
-    }
-    
-    .chevron {
-        margin-left: 5px;
-    }
+    .container { padding: 10px; }
+    .player-card, .leaderboard-card { padding: 20px; }
+    .rank-emblem { width: 40px; height: 40px; margin-right: 10px; }
+    .gamertag { font-size: 1.1rem; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gs { font-size: 0.85rem; padding: 4px 8px; white-space: nowrap; }
+    .header { gap: 10px; }
+    .chevron { margin-left: 5px; }
 
     /* Profile Mobile */
-    .card-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    .card-rank-icon {
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-    .card-score {
-        margin-top: 15px;
-        width: 100%;
-        text-align: center;
-    }
+    .calling-card { min-height: auto; padding: 20px; }
+    .card-content { flex-direction: column; text-align: center; }
+    .card-rank-icon { margin-right: 0; margin-bottom: 15px; }
+    .card-gamertag { flex-direction: column; gap: 5px; }
+    .card-score { margin-top: 15px; width: 100%; text-align: center; }
+
+    /* Nav Mobile */
+    .nav-bar { justify-content: space-around; }
+    .nav-pill { font-size: 1rem; padding: 10px; }
 }
 
-/* Fix for Gamertag Link */
-a.gamertag {
-    text-decoration: none;
-    color: var(--text-header);
-    transition: color 0.2s ease;
-}
-a.gamertag:hover {
-    color: var(--accent-color);
-}
+a.gamertag { text-decoration: none; color: var(--text-header); transition: color 0.2s ease; }
+a.gamertag:hover { color: var(--accent-color); }
