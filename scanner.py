@@ -1,3 +1,6 @@
+# Core-X // Scanner Module
+# Handles background parsing of Minecraft stats files.
+
 import os
 import json
 import sqlite3

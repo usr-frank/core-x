@@ -1,3 +1,6 @@
+# Core-X // Database Initializer
+# Handles schema creation and seed data.
+
 import sqlite3
 import os
 import yaml
