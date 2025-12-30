@@ -2,6 +2,7 @@ from flask import Flask, render_template, render_template_string
 import sqlite3
 import os
 import threading
+from mcstatus import JavaServer
 from scanner import run_loop
 from init_db import init_system
 
@@ -13,6 +14,66 @@ def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     return conn
+
+def get_server_status():
+    """Queries the local Minecraft server for status."""
+    try:
+        server = JavaServer.lookup("localhost:25565", timeout=1)
+        status = server.status()
+        return f"Online ({status.players.online}/{status.players.max} Players)"
+    except Exception:
+        return "Offline"
+
+def get_server_era(total_score):
+    """
+    Calculates the Global Server Rank (Era).
+    Tiers:
+      - Stone Age: 0 - 4,999
+      - Bronze Age: 5,000 - 9,999
+      - Iron Age: 10,000 - 24,999
+      - Diamond Age: 25,000+
+    """
+    if total_score >= 25000:
+        return {
+            "name": "Diamond Age (Max Level)",
+            "class_name": "diamond-age",
+            "current": total_score,
+            "max": 25000,
+            "progress": 100
+        }
+    elif total_score >= 10000:
+        min_s = 10000
+        max_s = 25000
+        progress = int(((total_score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "name": f"Iron Age ({total_score:,} / {max_s:,} G)",
+            "class_name": "iron-age",
+            "current": total_score,
+            "max": max_s,
+            "progress": progress
+        }
+    elif total_score >= 5000:
+        min_s = 5000
+        max_s = 10000
+        progress = int(((total_score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "name": f"Bronze Age ({total_score:,} / {max_s:,} G)",
+            "class_name": "bronze-age",
+            "current": total_score,
+            "max": max_s,
+            "progress": progress
+        }
+    else:
+        min_s = 0
+        max_s = 5000
+        progress = int(((total_score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "name": f"Stone Age ({total_score:,} / {max_s:,} G)",
+            "class_name": "stone-age",
+            "current": total_score,
+            "max": max_s,
+            "progress": progress
+        }
 
 def get_player_rank(score):
     # Recruit: 0-499
@@ -155,8 +216,16 @@ def index():
         })
     
     conn.close()
+
+    # Calculate Global Stats
+    global_score = sum(p['score'] for p in dashboard_data)
+    server_era = get_server_era(global_score)
+    server_status = get_server_status()
     
-    return render_template('index.html', data=dashboard_data)
+    return render_template('index.html',
+                           data=dashboard_data,
+                           server_era=server_era,
+                           server_status=server_status)
 
 def start_scanner():
     """Starts the background scanner thread"""

@@ -78,3 +78,63 @@ h1 { letter-spacing: 4px; border-bottom: 2px solid #00ce7c; padding-bottom: 15px
     transition: width 0.5s ease-in-out;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
+
+/* Server Status Widget */
+.status-widget {
+    background: #18181b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #27272a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.status-label {
+    font-weight: bold;
+    color: #bbb;
+}
+.status-value {
+    font-weight: bold;
+}
+.status-value.online {
+    color: #00ce7c;
+}
+.status-value.offline {
+    color: #ef4444;
+}
+
+/* Global Era Bar */
+.era-section {
+    background: #18181b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #27272a;
+}
+.era-header {
+    margin-bottom: 10px;
+}
+.era-title {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1em;
+}
+.era-progress-container {
+    width: 100%;
+    background-color: #333;
+    border-radius: 6px;
+    height: 24px;
+    overflow: hidden;
+    position: relative;
+}
+.era-progress-bar {
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Era Colors */
+.stone-age { background-color: #757575; }
+.bronze-age { background-color: #cd7f32; }
+.iron-age { background-color: #e0e0e0; }
+.diamond-age { background-color: #00ced1; box-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }

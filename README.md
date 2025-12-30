@@ -14,6 +14,7 @@ Core-X is a Dockerized Sidecar application that attaches to your Minecraft serve
 * **Identity:** Automatically syncs UUIDs to GamerTags.
 * **Web Dashboard:** Dark-mode UI with live progress tracking.
 * **Configurable:** Define custom achievements via YAML.
+* **Community Hub:** Real-time Server Status and Global "Age" Progression system.
 
 ## 🛠 Installation
 
@@ -52,12 +53,21 @@ Players are assigned a rank based on their Total Gamerscore, visualized with a g
 * **Veteran:** 1000 - 1999 G
 * **Warlord:** 2000+ G (Max Rank)
 
-### 4. Ignite
+### 5. Community Hub
+The dashboard now tracks global server progress through "Ages" based on the combined score of all players:
+* **Stone Age:** 0 - 4,999 G
+* **Bronze Age:** 5,000 - 9,999 G
+* **Iron Age:** 10,000 - 24,999 G
+* **Diamond Age:** 25,000+ G
+
+It also displays the current status of the Minecraft server (Online/Offline) and player count.
+
+### 6. Ignite
 ```bash
 docker compose up -d --build
 ```
 
-### 5. Verify
+### 7. Verify
 Access the dashboard at: `http://localhost:5000`
 
 ## 🏆 Default Achievements

@@ -9,6 +9,25 @@
 <body>
     <div class="container">
         <h1>Core-X // Vanguard</h1>
+
+        <!-- Server Status Widget -->
+        <div class="status-widget">
+            <span class="status-label">Server Status:</span>
+            <span class="status-value {% if 'Online' in server_status %}online{% else %}offline{% endif %}">
+                {{ server_status }}
+            </span>
+        </div>
+
+        <!-- Global Server Rank (Era Bar) -->
+        <div class="era-section">
+            <div class="era-header">
+                <span class="era-title">Current Era: {{ server_era.name }}</span>
+            </div>
+            <div class="era-progress-container">
+                <div class="era-progress-bar {{ server_era.class_name }}" style="width: {{ server_era.progress }}%;"></div>
+            </div>
+        </div>
+
         {% for player in data %}
         <div class="player-card">
             <div class="header">
