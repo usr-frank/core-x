@@ -47,6 +47,10 @@
         </div>
 
         <div style="display: flex; align-items: center;">
+            <div class="net-worth-badge" title="Net Worth" style="margin-right: 15px;">
+                 <span class="currency-symbol">$</span>
+                 <span class="net-worth-value">{{ "{:,}".format(player.net_worth) }}</span>
+            </div>
             <div class="gs">{{ player.score }} G</div>
             <span class="chevron">▼</span>
         </div>

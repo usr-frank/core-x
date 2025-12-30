@@ -84,6 +84,7 @@ def scan_sector():
                 
                 # --- PART A: GLOBAL STAT HARVEST (For Leaderboards) ---
                 custom_stats = data.get("stats", {}).get("minecraft:custom", {})
+                mined_stats = data.get("stats", {}).get("minecraft:mined", {})
                 
                 # 1. Mob Kills (Handle missing key)
                 total_kills = custom_stats.get("minecraft:mob_kills", 0)
@@ -98,7 +99,14 @@ def scan_sector():
                     (uuid, 'total_kills', total_kills),
                     (uuid, 'total_deaths', total_deaths),
                     (uuid, 'play_time_ticks', play_time),
-                    (uuid, 'distance_walked', dist_walked)
+                    (uuid, 'distance_walked', dist_walked),
+                    (uuid, 'mined_ancient_debris', mined_stats.get('minecraft:ancient_debris', 0)),
+                    (uuid, 'mined_diamond_ore', mined_stats.get('minecraft:diamond_ore', 0)),
+                    (uuid, 'mined_deepslate_diamond_ore', mined_stats.get('minecraft:deepslate_diamond_ore', 0)),
+                    (uuid, 'mined_emerald_ore', mined_stats.get('minecraft:emerald_ore', 0)),
+                    (uuid, 'mined_deepslate_emerald_ore', mined_stats.get('minecraft:deepslate_emerald_ore', 0)),
+                    (uuid, 'mined_gold_ore', mined_stats.get('minecraft:gold_ore', 0)),
+                    (uuid, 'mined_deepslate_gold_ore', mined_stats.get('minecraft:deepslate_gold_ore', 0))
                 ]
 
                 cursor.executemany('''

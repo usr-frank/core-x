@@ -17,6 +17,12 @@
                 {% else %}
                     <span class="card-ironman" title="Fallen: {{ player.stats.deaths }} Deaths">💀</span>
                 {% endif %}
+
+                <!-- Net Worth Badge -->
+                <div class="net-worth-badge" title="Lifetime Net Worth">
+                    <span class="currency-symbol">$</span>
+                    <span class="net-worth-value">{{ "{:,}".format(player.net_worth) }}</span>
+                </div>
             </h1>
             <div class="card-title">{{ player.rank.current_title }}</div>
         </div>
@@ -43,6 +49,17 @@
         <div class="stat-label">Time Played</div>
         <div class="stat-value">{{ player.stats.playtime }}</div>
     </div>
+</div>
+
+<!-- Mining Log -->
+<h2 class="section-title">Mining Log</h2>
+<div class="combat-record"> <!-- Reusing combat record grid for consistent look -->
+    {% for item in player.mining_log %}
+    <div class="stat-box">
+        <div class="stat-label" style="font-size: 0.8em; color: var(--accent-color);">{{ item.name }}</div>
+        <div class="stat-value" style="font-size: 1.2em;">{{ "{:,}".format(item.count) }}</div>
+    </div>
+    {% endfor %}
 </div>
 
 <!-- Achievements Section -->
