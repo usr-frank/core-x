@@ -1,10 +1,11 @@
-from flask import Flask, render_template, render_template_string
+from flask import Flask, render_template, render_template_string, request
 import sqlite3
 import os
 import threading
 from mcstatus import JavaServer
 from scanner import run_loop
 from init_db import init_system
+import math
 
 app = Flask(__name__)
 # Get DB path from Docker environment, or default to local file
@@ -135,21 +136,59 @@ def get_player_rank(score):
 def index():
     conn = get_db_connection()
     
-    # JOIN with players table to get the real name
-    query = '''
+    # --- 1. Search & Pagination Params ---
+    query_param = request.args.get('q', '')
+    page_param = request.args.get('page', 1, type=int)
+    per_page = 10
+
+    # --- 2. Build Base Query and Count ---
+    # Need distinct list of players first based on search
+    if query_param:
+        count_query = "SELECT COUNT(*) FROM players WHERE gamertag LIKE ?"
+        count_args = (f"%{query_param}%",)
+    else:
+        count_query = "SELECT COUNT(*) FROM players"
+        count_args = ()
+
+    total_players = conn.execute(count_query, count_args).fetchone()[0]
+    total_pages = math.ceil(total_players / per_page)
+
+    if page_param < 1: page_param = 1
+    if page_param > total_pages and total_pages > 0: page_param = total_pages
+
+    offset = (page_param - 1) * per_page
+
+    # --- 3. Fetch Paginated Players ---
+    # We need to JOIN/GROUP BY to get score for ordering
+    # Note: If we just order by gamertag it's easier, but original code ordered by score DESC.
+    # To order by score, we must do the join.
+
+    sql = '''
         SELECT 
             p.gamertag, 
             p.uuid,
-            COALESCE(SUM(d.points), 0) as score,
-            (SELECT SUM(points) FROM definitions) as total_possible
+            COALESCE(SUM(d.points), 0) as score
         FROM players p
         LEFT JOIN unlocks u ON p.uuid = u.player_uuid
         LEFT JOIN definitions d ON u.achievement_id = d.id
+    '''
+
+    if query_param:
+        sql += " WHERE p.gamertag LIKE ? "
+        sql_args = [f"%{query_param}%"]
+    else:
+        sql_args = []
+
+    sql += '''
         GROUP BY p.uuid
         ORDER BY score DESC
+        LIMIT ? OFFSET ?
     '''
-    players = conn.execute(query).fetchall()
+    sql_args.extend([per_page, offset])
+
+    players = conn.execute(sql, tuple(sql_args)).fetchall()
     
+    # --- 4. Process Each Player (Details) ---
     dashboard_data = []
     for p in players:
         # Fetch Total Deaths for Ironman Logic
@@ -172,12 +211,11 @@ def index():
         unlocked_ids = {u['id'] for u in unlocks}
 
         # Get Progress for Locked Achievements
-        # Prepare parameters: First is the UUID, then the list of IDs to exclude
         params = [p['uuid']]
         if unlocked_ids:
             params.extend(unlocked_ids)
         else:
-            params.append('') # Dummy value to satisfy the '?' if list is empty
+            params.append('') # Dummy
 
         progress_rows = conn.execute('''
             SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold, d.points
@@ -216,8 +254,6 @@ def index():
                 "points": pr['points']
             })
 
-        # Combine, maybe sort by progress?
-        # For now, let's just list unlocks first, then progress
         all_achievements = processed_unlocks + processed_progress
 
         dashboard_data.append({
@@ -228,17 +264,32 @@ def index():
             "deaths": deaths
         })
     
+    # --- 5. Global Stats (Need separate query for total server score since we are paginating) ---
+    # We can't sum just the paginated results for the Era Bar.
+    # We need the sum of ALL players' scores.
+    global_score_row = conn.execute('''
+        SELECT SUM(score) FROM (
+            SELECT COALESCE(SUM(d.points), 0) as score
+            FROM players p
+            LEFT JOIN unlocks u ON p.uuid = u.player_uuid
+            LEFT JOIN definitions d ON u.achievement_id = d.id
+            GROUP BY p.uuid
+        )
+    ''').fetchone()
+    global_score = global_score_row[0] if global_score_row and global_score_row[0] else 0
+
     conn.close()
 
-    # Calculate Global Stats
-    global_score = sum(p['score'] for p in dashboard_data)
     server_era = get_server_era(global_score)
     server_status = get_server_status()
     
     return render_template('index.html',
                            data=dashboard_data,
                            server_era=server_era,
-                           server_status=server_status)
+                           server_status=server_status,
+                           current_page=page_param,
+                           total_pages=total_pages,
+                           search_query=query_param)
 
 @app.route('/leaderboard')
 def leaderboard():

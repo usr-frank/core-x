@@ -1,0 +1,28 @@
+⚙️  Initializing Core-X Database at corex.db...
+📄 Loading achievements from achievements.yaml...
+✅ Database System Online.
+🚀 Scanner Loop Initiated
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.2:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [30/Dec/2025 16:07:50] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:01] "GET /?page=2 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:13] "GET /?q=Crafter HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:23] "GET /?q=Crafter&page=1 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:34] "GET /?q=Crafter&page=1 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:08:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:09:06] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:09:27] "GET /?q=Crafter HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:09:47] "GET /?q=Miner HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:10:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:10:57] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:10:57] "GET /static/ranks/warlord.svg HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:10:58] "GET /?q=Crafter HTTP/1.1" 200 -
+127.0.0.1 - - [30/Dec/2025 16:10:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [30/Dec/2025 16:10:58] "[36mGET /static/ranks/warlord.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [30/Dec/2025 16:10:58] "GET /static/ranks/veteran.svg HTTP/1.1" 200 -

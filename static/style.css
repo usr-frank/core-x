@@ -100,7 +100,8 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
 
 
 .player-card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px var(--shadow-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; cursor: pointer; }
 
 /* Player Identity Wrapper (Rank Icon + Gamertag) */
 .player-identity {
@@ -309,5 +310,74 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     font-weight: bold;
 }
 .rank-score {
+    color: var(--text-secondary);
+}
+
+/* Search Bar */
+.search-container {
+    margin-bottom: 20px;
+}
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+.search-input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/* Accordion & Chevron */
+.chevron {
+    transition: transform 0.3s ease;
+    margin-left: 10px;
+    color: var(--text-secondary);
+}
+.chevron.rotated {
+    transform: rotate(180deg);
+}
+.achievement-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    opacity: 0;
+}
+.achievement-list.expanded {
+    opacity: 1;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+.page-btn {
+    padding: 8px 16px;
+    text-decoration: none;
+    color: var(--text-main);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.page-btn:hover {
+    background: var(--accent-bg-alpha);
+    border-color: var(--accent-color);
+}
+.page-btn.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.page-info {
+    padding: 8px 12px;
     color: var(--text-secondary);
 }
