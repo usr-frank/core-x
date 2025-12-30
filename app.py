@@ -152,6 +152,14 @@ def index():
     
     dashboard_data = []
     for p in players:
+        # Fetch Total Deaths for Ironman Logic
+        death_row = conn.execute(
+            "SELECT value FROM player_stats WHERE player_uuid = ? AND stat_name = 'total_deaths'",
+            (p['uuid'],)
+        ).fetchone()
+
+        deaths = death_row['value'] if death_row else 0
+
         # Get Unlocked Achievements
         unlocks = conn.execute('''
             SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold, d.points
@@ -216,7 +224,8 @@ def index():
             "name": p['gamertag'] if p['gamertag'] else p['uuid'][:8],
             "score": p['score'],
             "rank": get_player_rank(p['score']),
-            "achievements": all_achievements
+            "achievements": all_achievements,
+            "deaths": deaths
         })
     
     conn.close()
@@ -230,6 +239,53 @@ def index():
                            data=dashboard_data,
                            server_era=server_era,
                            server_status=server_status)
+
+@app.route('/leaderboard')
+def leaderboard():
+    conn = get_db_connection()
+
+    def get_top_stat(stat_name, limit=5):
+        query = '''
+            SELECT p.gamertag, s.value
+            FROM player_stats s
+            JOIN players p ON s.player_uuid = p.uuid
+            WHERE s.stat_name = ?
+            ORDER BY s.value DESC
+            LIMIT ?
+        '''
+        return conn.execute(query, (stat_name, limit)).fetchall()
+
+    # 1. Bloodlust (Kills)
+    kills = get_top_stat('total_kills')
+    bloodlust = [{'rank': i+1, 'name': r['gamertag'], 'score': f"{r['value']:,}"} for i, r in enumerate(kills)]
+
+    # 2. Darwin Awards (Deaths)
+    deaths = get_top_stat('total_deaths')
+    darwin = [{'rank': i+1, 'name': r['gamertag'], 'score': f"{r['value']:,}"} for i, r in enumerate(deaths)]
+
+    # 3. No Lifers (Play Time: Ticks -> Hours)
+    # 20 ticks = 1 sec -> 72000 ticks = 1 hour
+    time_rows = get_top_stat('play_time_ticks')
+    no_lifers = []
+    for i, r in enumerate(time_rows):
+        hours = round(r['value'] / 72000, 1)
+        no_lifers.append({'rank': i+1, 'name': r['gamertag'], 'score': f"{hours} hrs"})
+
+    # 4. Marathon Runners (Distance: cm -> km)
+    # 100 cm = 1 m -> 100,000 cm = 1 km
+    dist_rows = get_top_stat('distance_walked')
+    runners = []
+    for i, r in enumerate(dist_rows):
+        km = round(r['value'] / 100000, 2)
+        runners.append({'rank': i+1, 'name': r['gamertag'], 'score': f"{km} km"})
+
+    conn.close()
+
+    return render_template('leaderboard.html',
+                           bloodlust=bloodlust,
+                           darwin=darwin,
+                           no_lifers=no_lifers,
+                           runners=runners)
 
 def start_scanner():
     """Starts the background scanner thread"""

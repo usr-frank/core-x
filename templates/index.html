@@ -1,119 +1,91 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CORE-X | Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="60">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <!-- Main Header Refactor -->
-        <div class="main-header">
-            <h1>Core-X // Vanguard</h1>
-            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">Switch to Aether</button>
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block meta_refresh %}
+<meta http-equiv="refresh" content="60">
+{% endblock %}
+
+{% block content %}
+<!-- Server Status Widget -->
+<div class="status-widget">
+    <span class="status-label">Server Status:</span>
+    <span class="status-value {% if 'Online' in server_status %}online{% else %}offline{% endif %}">
+        {{ server_status }}
+    </span>
+</div>
+
+<!-- Global Server Rank (Era Bar) -->
+<div class="era-section">
+    <div class="era-header">
+        <span class="era-title">Current Era: {{ server_era.name }}</span>
+    </div>
+    <div class="era-progress-container">
+        <div class="era-progress-bar {{ server_era.class_name }}" style="width: {{ server_era.progress }}%;"></div>
+    </div>
+</div>
+
+{% for player in data %}
+<div class="player-card">
+    <div class="header">
+        <div class="player-identity">
+            <!-- Rank Icon -->
+            <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
+
+            <div class="gamertag">{{ player.name }}</div>
+
+            <!-- Ironman Status (To be implemented in app.py logic) -->
+            {% if player.deaths is defined %}
+                {% if player.deaths == 0 %}
+                    <span class="ironman-icon" title="Ironman: 0 Deaths">❤️</span>
+                {% else %}
+                    <span class="ironman-icon" title="Fallen: {{ player.deaths }} Deaths">💀</span>
+                {% endif %}
+            {% endif %}
         </div>
-
-        <!-- Server Status Widget -->
-        <div class="status-widget">
-            <span class="status-label">Server Status:</span>
-            <span class="status-value {% if 'Online' in server_status %}online{% else %}offline{% endif %}">
-                {{ server_status }}
-            </span>
-        </div>
-
-        <!-- Global Server Rank (Era Bar) -->
-        <div class="era-section">
-            <div class="era-header">
-                <span class="era-title">Current Era: {{ server_era.name }}</span>
-            </div>
-            <div class="era-progress-container">
-                <div class="era-progress-bar {{ server_era.class_name }}" style="width: {{ server_era.progress }}%;"></div>
-            </div>
-        </div>
-
-        {% for player in data %}
-        <div class="player-card">
-            <div class="header">
-                <div class="player-identity">
-                    <!-- Rank Icon -->
-                    <img src="{{ player.rank.image_path }}" class="rank-emblem" alt="{{ player.rank.current_title }}">
-                    <div class="gamertag">{{ player.name }}</div>
-                </div>
-                <div class="gs">{{ player.score }} G</div>
-            </div>
-
-            <!-- Rank Progress Bar -->
-            <div class="rank-section">
-                <div class="rank-text">
-                    Rank: {{ player.rank.current_title }}
-                    {% if player.rank.next_rank_score %}
-                    -> {{ player.rank.next_title }} ({{ player.score }}/{{ player.rank.next_rank_score }})
-                    {% else %}
-                    (Max Rank)
-                    {% endif %}
-                </div>
-                <div class="rank-progress-container">
-                    <div class="rank-progress-bar" style="width: {{ player.rank.progress_percent }}%;"></div>
-                </div>
-            </div>
-
-            {% for ach in player.achievements %}
-            <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
-                <div class="icon">{{ ach.icon }}</div>
-                
-                <div style="flex-grow: 1;">
-                    <span class="title">{{ ach.name }}</span>
-                    <span class="desc">{{ ach.description }}</span>
-                    {% if ach.is_unlocked %}
-                        <span class="date">Unlocked: {{ ach.unlocked_at }}</span>
-                    {% else %}
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: {{ ach.progress }}%;"></div>
-                        </div>
-                        <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
-                    {% endif %}
-                </div>
-
-                <div class="points">{{ ach.points }} G</div>
-
-            </div>
-            {% endfor %}
-        </div>
-        {% endfor %}
-
-        {% if not data %}
-        <p>System Online. Waiting for player data...</p>
-        {% endif %}
+        <div class="gs">{{ player.score }} G</div>
     </div>
 
-    <script>
-        // Theme Switcher Logic
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('themeToggle');
+    <!-- Rank Progress Bar -->
+    <div class="rank-section">
+        <div class="rank-text">
+            Rank: {{ player.rank.current_title }}
+            {% if player.rank.next_rank_score %}
+            -> {{ player.rank.next_title }} ({{ player.score }}/{{ player.rank.next_rank_score }})
+            {% else %}
+            (Max Rank)
+            {% endif %}
+        </div>
+        <div class="rank-progress-container">
+            <div class="rank-progress-bar" style="width: {{ player.rank.progress_percent }}%;"></div>
+        </div>
+    </div>
 
-            body.classList.toggle('aether-theme');
+    {% for ach in player.achievements %}
+    <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
+        <div class="icon">{{ ach.icon }}</div>
 
-            if (body.classList.contains('aether-theme')) {
-                localStorage.setItem('theme', 'aether');
-                btn.textContent = 'Switch to Nether';
-            } else {
-                localStorage.setItem('theme', 'nether');
-                btn.textContent = 'Switch to Aether';
-            }
-        }
+        <div style="flex-grow: 1;">
+            <span class="title">{{ ach.name }}</span>
+            <span class="desc">{{ ach.description }}</span>
+            {% if ach.is_unlocked %}
+                <span class="date">Unlocked: {{ ach.unlocked_at }}</span>
+            {% else %}
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: {{ ach.progress }}%;"></div>
+                </div>
+                <span class="progress-text">{{ ach.current }} / {{ ach.total }}</span>
+            {% endif %}
+        </div>
 
-        // Apply saved theme on load
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            const btn = document.getElementById('themeToggle');
+        <div class="points">{{ ach.points }} G</div>
 
-            if (savedTheme === 'aether') {
-                document.body.classList.add('aether-theme');
-                if (btn) btn.textContent = 'Switch to Nether';
-            }
-        })();
-    </script>
-</body>
-</html>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% if not data %}
+<p>System Online. Waiting for player data...</p>
+{% endif %}
+{% endblock %}

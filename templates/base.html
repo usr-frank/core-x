@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORE-X | {% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block meta_refresh %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Header -->
+        <div class="main-header">
+            <h1>Core-X // Vanguard</h1>
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">Switch to Aether</button>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <a href="{{ url_for('index') }}" class="nav-pill {% if request.endpoint == 'index' %}active{% endif %}">Dashboard</a>
+            <a href="{{ url_for('leaderboard') }}" class="nav-pill {% if request.endpoint == 'leaderboard' %}active{% endif %}">Hall of Fame</a>
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Theme Switcher Logic
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+
+            body.classList.toggle('aether-theme');
+
+            if (body.classList.contains('aether-theme')) {
+                localStorage.setItem('theme', 'aether');
+                btn.textContent = 'Switch to Nether';
+            } else {
+                localStorage.setItem('theme', 'nether');
+                btn.textContent = 'Switch to Aether';
+            }
+        }
+
+        // Apply saved theme on load
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const btn = document.getElementById('themeToggle');
+
+            if (savedTheme === 'aether') {
+                document.body.classList.add('aether-theme');
+                if (btn) btn.textContent = 'Switch to Nether';
+            }
+        })();
+    </script>
+</body>
+</html>

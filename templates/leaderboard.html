@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Hall of Fame{% endblock %}
+
+{% block content %}
+<div class="leaderboard-grid">
+    <!-- Bloodlust (Kills) -->
+    <div class="leaderboard-card">
+        <div class="category-title">Bloodlust (Kills)</div>
+        <ul class="rank-list">
+            {% for p in bloodlust %}
+            <li class="rank-item">
+                <span class="rank-pos">#{{ p.rank }}</span>
+                <span class="rank-name">{{ p.name }}</span>
+                <span class="rank-score">{{ p.score }}</span>
+            </li>
+            {% endfor %}
+            {% if not bloodlust %}
+            <li class="rank-item" style="justify-content: center; color: var(--text-tertiary);">No Data</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Darwin Awards (Deaths) -->
+    <div class="leaderboard-card">
+        <div class="category-title">Darwin Awards (Deaths)</div>
+        <ul class="rank-list">
+            {% for p in darwin %}
+            <li class="rank-item">
+                <span class="rank-pos">#{{ p.rank }}</span>
+                <span class="rank-name">{{ p.name }}</span>
+                <span class="rank-score">{{ p.score }}</span>
+            </li>
+            {% endfor %}
+            {% if not darwin %}
+            <li class="rank-item" style="justify-content: center; color: var(--text-tertiary);">No Data</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- No Lifers (Play Time) -->
+    <div class="leaderboard-card">
+        <div class="category-title">No Lifers (Time)</div>
+        <ul class="rank-list">
+            {% for p in no_lifers %}
+            <li class="rank-item">
+                <span class="rank-pos">#{{ p.rank }}</span>
+                <span class="rank-name">{{ p.name }}</span>
+                <span class="rank-score">{{ p.score }}</span>
+            </li>
+            {% endfor %}
+            {% if not no_lifers %}
+            <li class="rank-item" style="justify-content: center; color: var(--text-tertiary);">No Data</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Marathon Runners (Distance) -->
+    <div class="leaderboard-card">
+        <div class="category-title">Marathon Runners (Dist)</div>
+        <ul class="rank-list">
+            {% for p in runners %}
+            <li class="rank-item">
+                <span class="rank-pos">#{{ p.rank }}</span>
+                <span class="rank-name">{{ p.name }}</span>
+                <span class="rank-score">{{ p.score }}</span>
+            </li>
+            {% endfor %}
+            {% if not runners %}
+            <li class="rank-item" style="justify-content: center; color: var(--text-tertiary);">No Data</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
