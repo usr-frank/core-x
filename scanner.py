@@ -13,8 +13,9 @@ SCAN_INTERVAL = int(os.getenv("SCAN_INTERVAL", 5))
 def get_db_connection():
     return sqlite3.connect(DB_NAME)
 
-def init_player_table(cursor):
-    """Creates the players table on the fly if it doesn't exist"""
+def init_tables(cursor):
+    """Creates necessary tables on the fly if they don't exist"""
+    # 1. Players Table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS players (
         uuid TEXT PRIMARY KEY,
@@ -22,9 +23,7 @@ def init_player_table(cursor):
         last_seen TIMESTAMP
     )
     ''')
-
-def init_stats_table(cursor):
-    """Creates the player_stats table on the fly if it doesn't exist"""
+    # 2. Player Stats Table (For Leaderboards)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS player_stats (
         player_uuid TEXT,
@@ -38,17 +37,13 @@ def init_stats_table(cursor):
 def sync_identities(cursor):
     """Reads Minecraft usercache.json to map UUIDs to Names"""
     if not os.path.exists(USERCACHE_PATH):
-        # Only print warning once per run or on error, otherwise it spams logs in loop
-        # print(f"⚠️  Warning: Usercache not found at {USERCACHE_PATH}")
         return
 
     try:
         with open(USERCACHE_PATH, 'r') as f:
             users = json.load(f)
             
-        # print(f"🆔 Syncing {len(users)} identities...")
         for u in users:
-            # Insert or Update the player name
             cursor.execute('''
             INSERT INTO players (uuid, gamertag, last_seen) 
             VALUES (?, ?, ?)
@@ -64,19 +59,17 @@ def scan_sector():
     
     try:
         # 1. Upgrade DB Structure (Safety check)
-        init_player_table(cursor)
-        init_stats_table(cursor)
+        init_tables(cursor)
         
         # 2. Sync Names
         sync_identities(cursor)
         conn.commit()
 
-        # 3. Get Rules
+        # 3. Get Rules for Achievements
         cursor.execute("SELECT id, name, threshold, stat_key, icon FROM definitions")
         rules = cursor.fetchall()
 
         if not os.path.exists(STATS_PATH):
-            # print(f"⚠️ Stats path not found: {STATS_PATH}")
             return
 
         files = [f for f in os.listdir(STATS_PATH) if f.endswith(".json")]
@@ -88,38 +81,63 @@ def scan_sector():
             try:
                 with open(full_path, 'r') as f:
                     data = json.load(f)
-                stats = data.get("stats", {}).get("minecraft:custom", {})
+                
+                # --- PART A: GLOBAL STAT HARVEST (For Leaderboards) ---
+                custom_stats = data.get("stats", {}).get("minecraft:custom", {})
+                
+                # 1. Mob Kills (Handle missing key)
+                total_kills = custom_stats.get("minecraft:mob_kills", 0)
+                # 2. Deaths (Handle missing key)
+                total_deaths = custom_stats.get("minecraft:deaths", 0)
+                # 3. Play Time (FIXED KEY: play_time instead of play_one_minute)
+                play_time = custom_stats.get("minecraft:play_time", 0)
+                # 4. Walk Distance
+                dist_walked = custom_stats.get("minecraft:walk_one_cm", 0)
 
+                harvest_data = [
+                    (uuid, 'total_kills', total_kills),
+                    (uuid, 'total_deaths', total_deaths),
+                    (uuid, 'play_time_ticks', play_time),
+                    (uuid, 'distance_walked', dist_walked)
+                ]
+
+                cursor.executemany('''
+                    INSERT INTO player_stats (player_uuid, stat_name, value, last_updated)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(player_uuid, stat_name) DO UPDATE SET
+                        value=excluded.value,
+                        last_updated=excluded.last_updated
+                ''', [(h[0], h[1], h[2], datetime.now()) for h in harvest_data])
+
+                # --- PART B: ACHIEVEMENT SCANNING ---
                 # Fetch Name for logging
                 cursor.execute("SELECT gamertag FROM players WHERE uuid=?", (uuid,))
                 result = cursor.fetchone()
                 player_name = result[0] if result else uuid[:8]
-
-                # print(f"👤 Scanning: {player_name}")
-
-                # --- GLOBAL STAT HARVEST ---
-                global_stats_map = {
-                    "minecraft:mob_kills": "total_kills",
-                    "minecraft:deaths": "total_deaths",
-                    "minecraft:play_one_minute": "play_time_ticks",
-                    "minecraft:walk_one_cm": "distance_walked"
-                }
-
-                for mc_key, db_key in global_stats_map.items():
-                    # Extract value, default to 0
-                    stat_val = stats.get(mc_key, 0)
-
-                    cursor.execute('''
-                        INSERT INTO player_stats (player_uuid, stat_name, value, last_updated)
-                        VALUES (?, ?, ?, ?)
-                        ON CONFLICT(player_uuid, stat_name) DO UPDATE SET
-                            value=excluded.value,
-                            last_updated=excluded.last_updated
-                    ''', (uuid, db_key, stat_val, datetime.now()))
-                # ---------------------------
                 
+                # Need to look at ROOT stats for accurate mining/crafting checks
+                # Helper to find deeply nested keys safely
+                def get_stat_value(stat_path):
+                    parts = stat_path.split(":")
+                    # e.g. minecraft:mined:minecraft:stone -> ["minecraft", "mined", "minecraft", "stone"]
+                    # But JSON structure is stats -> minecraft:mined -> minecraft:stone
+                    # We need to map the DB key format to the JSON format
+                    
+                    # Case 1: Custom Stats (minecraft:mob_kills)
+                    if len(parts) == 2: 
+                        return custom_stats.get(stat_path, 0)
+                    
+                    # Case 2: Block/Item Stats (minecraft:mined:minecraft:stone)
+                    # The DB key is often "minecraft:mined:minecraft:stone"
+                    # The JSON is data["stats"]["minecraft:mined"]["minecraft:stone"]
+                    category = parts[0] + ":" + parts[1] # "minecraft:mined"
+                    item = parts[2] + ":" + parts[3]     # "minecraft:stone"
+                    
+                    return data.get("stats", {}).get(category, {}).get(item, 0)
+
                 for (rule_id, name, threshold, key, icon) in rules:
-                    val = stats.get(key, 0)
+                    # Use the helper to find the value regardless of category
+                    val = get_stat_value(key)
                     
                     # Update Progress
                     cursor.execute('''
