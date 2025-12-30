@@ -3,8 +3,8 @@ services:
     build: .
     container_name: core-x
     restart: unless-stopped
-    ports:
-      - "5000:5000"
+    # KEY FIX: This lets the container see the real "localhost" (Minecraft)
+    network_mode: "host"
     environment:
       - MINECRAFT_STATS=/data/stats
       - MINECRAFT_CACHE=/data/usercache.json
@@ -16,5 +16,5 @@ services:
       - /home/frank/minecraft/data/usercache.json:/data/usercache.json:ro
       # Storage for the Database
       - ./corex_data:/data
-      # HOT SWAP CONFIG (The Fix)
+      # Hot Swap Config
       - ./achievements.yaml:/app/achievements.yaml
