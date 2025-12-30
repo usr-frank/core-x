@@ -23,6 +23,18 @@ def init_player_table(cursor):
     )
     ''')
 
+def init_stats_table(cursor):
+    """Creates the player_stats table on the fly if it doesn't exist"""
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS player_stats (
+        player_uuid TEXT,
+        stat_name TEXT,
+        value INTEGER DEFAULT 0,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (player_uuid, stat_name)
+    )
+    ''')
+
 def sync_identities(cursor):
     """Reads Minecraft usercache.json to map UUIDs to Names"""
     if not os.path.exists(USERCACHE_PATH):
@@ -53,6 +65,7 @@ def scan_sector():
     try:
         # 1. Upgrade DB Structure (Safety check)
         init_player_table(cursor)
+        init_stats_table(cursor)
         
         # 2. Sync Names
         sync_identities(cursor)
@@ -83,6 +96,27 @@ def scan_sector():
                 player_name = result[0] if result else uuid[:8]
 
                 # print(f"👤 Scanning: {player_name}")
+
+                # --- GLOBAL STAT HARVEST ---
+                global_stats_map = {
+                    "minecraft:mob_kills": "total_kills",
+                    "minecraft:deaths": "total_deaths",
+                    "minecraft:play_one_minute": "play_time_ticks",
+                    "minecraft:walk_one_cm": "distance_walked"
+                }
+
+                for mc_key, db_key in global_stats_map.items():
+                    # Extract value, default to 0
+                    stat_val = stats.get(mc_key, 0)
+
+                    cursor.execute('''
+                        INSERT INTO player_stats (player_uuid, stat_name, value, last_updated)
+                        VALUES (?, ?, ?, ?)
+                        ON CONFLICT(player_uuid, stat_name) DO UPDATE SET
+                            value=excluded.value,
+                            last_updated=excluded.last_updated
+                    ''', (uuid, db_key, stat_val, datetime.now()))
+                # ---------------------------
                 
                 for (rule_id, name, threshold, key, icon) in rules:
                     val = stats.get(key, 0)

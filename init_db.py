@@ -58,7 +58,18 @@ def init_system():
     )
     ''')
 
-    # 5. Seed Initial Data from YAML
+    # 5. Create Table: PLAYER_STATS (Raw Global Stats)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS player_stats (
+        player_uuid TEXT,
+        stat_name TEXT,
+        value INTEGER DEFAULT 0,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (player_uuid, stat_name)
+    )
+    ''')
+
+    # 6. Seed Initial Data from YAML
     if os.path.exists(ACHIEVEMENTS_PATH):
         print(f"📄 Loading achievements from {ACHIEVEMENTS_PATH}...")
         with open(ACHIEVEMENTS_PATH, 'r') as f:
