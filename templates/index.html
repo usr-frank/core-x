@@ -13,8 +13,24 @@
         <div class="player-card">
             <div class="header">
                 <div class="gamertag">{{ player.name }}</div>
-                <div class="gs">{{ player.score }} G <span style="font-size: 0.6em; color: #888;">({{ player.rank }})</span></div>
+                <div class="gs">{{ player.score }} G</div>
             </div>
+
+            <!-- Rank Progress Bar -->
+            <div class="rank-section">
+                <div class="rank-text">
+                    Rank: {{ player.rank.current_title }}
+                    {% if player.rank.next_rank_score %}
+                    -> {{ player.rank.next_title }} ({{ player.score }}/{{ player.rank.next_rank_score }})
+                    {% else %}
+                    (Max Rank)
+                    {% endif %}
+                </div>
+                <div class="rank-progress-container">
+                    <div class="rank-progress-bar" style="width: {{ player.rank.progress_percent }}%;"></div>
+                </div>
+            </div>
+
             {% for ach in player.achievements %}
             <div class="achievement {% if not ach.is_unlocked %}locked{% endif %}">
                 <div class="icon">{{ ach.icon }}</div>
