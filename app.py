@@ -1,4 +1,4 @@
-from flask import Flask, render_template, render_template_string, request
+from flask import Flask, render_template, request
 import sqlite3
 import os
 import threading
@@ -65,6 +65,10 @@ def calculate_net_worth(stats):
     gold = stats.get('mined_gold_ore', 0) + stats.get('mined_deepslate_gold_ore', 0)
 
     return (ancient_debris * 5000) + (emerald * 2500) + (diamond * 1000) + (gold * 250)
+
+@app.route('/health')
+def health_check():
+    return "OK", 200
 
 @app.route('/')
 def index():

@@ -11,8 +11,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY . .
 
+# Ensure entrypoint is executable
+RUN chmod +x entrypoint.sh
+
 # Expose the Web UI port
 EXPOSE 5000
 
 # The command to run when the container starts
-CMD ["python3", "app.py"]
+ENTRYPOINT ["./entrypoint.sh"]
