@@ -15,6 +15,7 @@ Core-X is a Dockerized Sidecar application that attaches to your Minecraft serve
 * **Web Dashboard:** Dark-mode UI with live progress tracking.
 * **Configurable:** Define custom achievements via YAML.
 * **Community Hub:** Real-time Server Status and Global "Age" Progression system.
+* **Visual Flair:** Rank Emblems and a "Nether/Aether" Theme Switcher.
 
 ## 🛠 Installation
 
@@ -47,13 +48,20 @@ achievements:
 *Note: If `points` is omitted, it defaults to 50 G.*
 
 ### 4. Player Ranks & Battle Pass
-Players are assigned a rank based on their Total Gamerscore, visualized with a gold progress bar:
+Players are assigned a rank based on their Total Gamerscore, visualized with a gold progress bar and a unique rank emblem:
 * **Recruit:** 0 - 499 G
 * **Scout:** 500 - 999 G
 * **Veteran:** 1000 - 1999 G
 * **Warlord:** 2000+ G (Max Rank)
 
-### 5. Community Hub
+*Note: This feature requires rank SVG assets (`recruit.svg`, `scout.svg`, `veteran.svg`, `warlord.svg`) to be present in `static/ranks/`.*
+
+### 5. Theme Switcher (Phase 2)
+Users can now toggle between two visual themes, persisted locally:
+* **Nether Mode:** The classic Dark theme with green accents.
+* **Aether Mode:** A new Light theme with white cards and blue accents.
+
+### 6. Community Hub
 The dashboard now tracks global server progress through "Ages" based on the combined score of all players:
 * **Stone Age:** 0 - 4,999 G
 * **Bronze Age:** 5,000 - 9,999 G
@@ -62,12 +70,12 @@ The dashboard now tracks global server progress through "Ages" based on the comb
 
 It also displays the current status of the Minecraft server (Online/Offline) and player count.
 
-### 6. Ignite
+### 7. Ignite
 ```bash
 docker compose up -d --build
 ```
 
-### 7. Verify
+### 8. Verify
 Access the dashboard at: `http://localhost:5000`
 
 ## 🏆 Default Achievements
