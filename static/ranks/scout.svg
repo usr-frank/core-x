@@ -1,4 +1,1 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" fill="blue" />
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="12">Scout</text>
-</svg>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L60 14 V30 C60 48 32 60 32 60 C32 60 4 48 4 30 V14 L32 4 Z" fill="#cd7f32" stroke="#8b4513" stroke-width="3"/><text x="32" y="42" font-size="24" text-anchor="middle" fill="white">🏹</text></svg>
