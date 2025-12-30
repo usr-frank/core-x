@@ -15,14 +15,56 @@ def get_db_connection():
     return conn
 
 def get_player_rank(score):
+    # Recruit: 0-499
+    # Scout: 500-999
+    # Veteran: 1000-1999
+    # Warlord: 2000+
+
     if score >= 2000:
-        return "Warlord"
+        return {
+            "current_title": "Warlord",
+            "next_title": "Max Rank",
+            "progress_percent": 100,
+            "current_score": score,
+            "next_rank_score": None,
+            "min_score": 2000
+        }
     elif score >= 1000:
-        return "Veteran"
+        min_s = 1000
+        max_s = 2000
+        progress = int(((score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "current_title": "Veteran",
+            "next_title": "Warlord",
+            "progress_percent": progress,
+            "current_score": score,
+            "next_rank_score": max_s,
+            "min_score": min_s
+        }
     elif score >= 500:
-        return "Scout"
+        min_s = 500
+        max_s = 1000
+        progress = int(((score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "current_title": "Scout",
+            "next_title": "Veteran",
+            "progress_percent": progress,
+            "current_score": score,
+            "next_rank_score": max_s,
+            "min_score": min_s
+        }
     else:
-        return "Recruit"
+        min_s = 0
+        max_s = 500
+        progress = int(((score - min_s) / (max_s - min_s)) * 100)
+        return {
+            "current_title": "Recruit",
+            "next_title": "Scout",
+            "progress_percent": progress,
+            "current_score": score,
+            "next_rank_score": max_s,
+            "min_score": min_s
+        }
 
 @app.route('/')
 def index():

@@ -45,12 +45,12 @@ achievements:
 ```
 *Note: If `points` is omitted, it defaults to 50 G.*
 
-### 4. Player Ranks
-Players are assigned a rank based on their Total Gamerscore:
-* **Recruit:** 0+ G
-* **Scout:** 500+ G
-* **Veteran:** 1000+ G
-* **Warlord:** 2000+ G
+### 4. Player Ranks & Battle Pass
+Players are assigned a rank based on their Total Gamerscore, visualized with a gold progress bar:
+* **Recruit:** 0 - 499 G
+* **Scout:** 500 - 999 G
+* **Veteran:** 1000 - 1999 G
+* **Warlord:** 2000+ G (Max Rank)
 
 ### 4. Ignite
 ```bash
