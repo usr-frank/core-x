@@ -70,7 +70,7 @@ h1, h2, h3, .main-header h1, .gamertag, .card-gamertag, .rank-text, .title, .car
     text-transform: uppercase; /* Rajdhani looks better uppercase usually, preserving existing styles */
 }
 
-.gs, .points, .stat-value, .date, .status-value, .rank-score, .medal-points {
+.gs, .points, .stat-value, .date, .status-value, .rank-score, .medal-points, .currency-value {
     font-family: var(--font-mono);
 }
 
@@ -211,6 +211,32 @@ h1, h2, h3, .main-header h1, .gamertag, .card-gamertag, .rank-text, .title, .car
     background: var(--accent-bg-alpha);
     padding: 5px 10px;
     border-radius: 4px;
+}
+
+/* Net Worth Badge */
+.net-worth-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--accent-color);
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-left: 10px;
+    font-size: 0.6em; /* Relative to header */
+    color: #fff;
+    vertical-align: middle;
+    box-shadow: 0 0 5px var(--accent-bg-alpha);
+}
+.currency-symbol {
+    font-family: var(--font-header);
+    color: var(--accent-color);
+    margin-right: 4px;
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+.net-worth-value {
+    font-family: var(--font-mono);
+    color: #e0e0e0;
 }
 
 .achievement { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid var(--card-border); }
@@ -449,6 +475,15 @@ h1, h2, h3, .main-header h1, .gamertag, .card-gamertag, .rank-text, .title, .car
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
+
+/* Oligarch List Styling */
+.oligarch-list .rank-item {
+    font-size: 1.2em;
+    padding: 15px;
+}
+.oligarch-gold { color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+.oligarch-silver { color: #C0C0C0; text-shadow: 0 0 10px rgba(192, 192, 192, 0.5); }
+.oligarch-bronze { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
 
 .category-title {
     font-size: 1.2rem;

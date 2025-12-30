@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Server Intelligence{% endblock %}
+
+{% block content %}
+<!-- Hero Section: World Stats -->
+<h2 class="section-title">World Stats</h2>
+<div class="combat-record">
+    <div class="stat-box">
+        <div class="stat-label">Total GDP</div>
+        <div class="stat-value" style="color: var(--accent-color);">{{ gdp }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Planetary Distance</div>
+        <div class="stat-value">{{ distance }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Total Playtime</div>
+        <div class="stat-value">{{ playtime }}</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Total Casualties</div>
+        <div class="stat-value">{{ casualties }}</div>
+    </div>
+</div>
+
+<!-- The Oligarchy -->
+<h2 class="section-title">The Oligarchy</h2>
+<div class="leaderboard-card">
+    <ul class="rank-list oligarch-list">
+        {% for p in oligarchs %}
+            <li class="rank-item">
+                <span class="rank-pos
+                    {% if loop.index == 1 %}oligarch-gold{% endif %}
+                    {% if loop.index == 2 %}oligarch-silver{% endif %}
+                    {% if loop.index == 3 %}oligarch-bronze{% endif %}
+                ">#{{ loop.index }}</span>
+                <span class="rank-name">{{ p.name }}</span>
+                <span class="rank-score"><span class="currency-symbol">$</span>{{ "{:,}".format(p.net_worth) }}</span>
+            </li>
+        {% endfor %}
+
+        {% if not oligarchs %}
+            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">No Data Available</div>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

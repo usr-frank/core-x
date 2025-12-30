@@ -58,6 +58,14 @@ def get_player_rank(score):
         progress = int((score / 500) * 100)
         return {"current_title": "Recruit", "image_path": "static/ranks/recruit.svg", "next_title": "Scout", "progress_percent": progress, "current_score": score, "next_rank_score": 500}
 
+def calculate_net_worth(stats):
+    ancient_debris = stats.get('mined_ancient_debris', 0)
+    diamond = stats.get('mined_diamond_ore', 0) + stats.get('mined_deepslate_diamond_ore', 0)
+    emerald = stats.get('mined_emerald_ore', 0) + stats.get('mined_deepslate_emerald_ore', 0)
+    gold = stats.get('mined_gold_ore', 0) + stats.get('mined_deepslate_gold_ore', 0)
+
+    return (ancient_debris * 5000) + (emerald * 2500) + (diamond * 1000) + (gold * 250)
+
 @app.route('/')
 def index():
     conn = get_db_connection()
@@ -96,8 +104,11 @@ def index():
     
     dashboard_data = []
     for p in players:
-        death_row = conn.execute("SELECT value FROM player_stats WHERE player_uuid = ? AND stat_name = 'total_deaths'", (p['uuid'],)).fetchone()
-        deaths = death_row['value'] if death_row else 0
+        stats_rows = conn.execute("SELECT stat_name, value FROM player_stats WHERE player_uuid = ?", (p['uuid'],)).fetchall()
+        stats = {row['stat_name']: row['value'] for row in stats_rows}
+
+        deaths = stats.get('total_deaths', 0)
+        net_worth = calculate_net_worth(stats)
         
         unlocks = conn.execute('''
             SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold, d.points
@@ -131,7 +142,8 @@ def index():
             "score": p['score'],
             "rank": get_player_rank(p['score']),
             "achievements": all_achievements,
-            "deaths": deaths
+            "deaths": deaths,
+            "net_worth": net_worth
         })
     
     global_score_row = conn.execute("SELECT SUM(score) FROM (SELECT COALESCE(SUM(d.points), 0) as score FROM players p LEFT JOIN unlocks u ON p.uuid = u.player_uuid LEFT JOIN definitions d ON u.achievement_id = d.id GROUP BY p.uuid)").fetchone()
@@ -152,6 +164,79 @@ def leaderboard():
     conn.close()
     return render_template('leaderboard.html', bloodlust=bloodlust, darwin=darwin, no_lifers=no_lifers, runners=runners)
 
+@app.route('/server')
+def server_intel():
+    conn = get_db_connection()
+
+    # 1. Fetch Global Aggregates (Single Query where possible)
+    # Note: Summing over all stats might be heavy, so we select specific stats
+    agg_query = '''
+        SELECT stat_name, SUM(value) as total
+        FROM player_stats
+        WHERE stat_name IN ('total_deaths', 'play_time_ticks', 'distance_walked')
+        GROUP BY stat_name
+    '''
+    aggs = {row['stat_name']: row['total'] for row in conn.execute(agg_query).fetchall()}
+
+    total_deaths = aggs.get('total_deaths', 0)
+    total_playtime = aggs.get('play_time_ticks', 0)
+    total_distance = aggs.get('distance_walked', 0)
+
+    # 2. Calculate Economy (Net Worth)
+    # We need to fetch all mining stats for all players to compute this accurately
+    # This is an expensive operation but necessary given the structure
+    # Optimization: Filter only mining stats
+    mining_stats = conn.execute('''
+        SELECT player_uuid, stat_name, value
+        FROM player_stats
+        WHERE stat_name IN (
+            'mined_ancient_debris',
+            'mined_diamond_ore', 'mined_deepslate_diamond_ore',
+            'mined_emerald_ore', 'mined_deepslate_emerald_ore',
+            'mined_gold_ore', 'mined_deepslate_gold_ore'
+        )
+    ''').fetchall()
+
+    player_wealth = {}
+    for row in mining_stats:
+        uid = row['player_uuid']
+        if uid not in player_wealth: player_wealth[uid] = {}
+        player_wealth[uid][row['stat_name']] = row['value']
+
+    # Calculate Total GDP and Oligarchs
+    total_gdp = 0
+    rich_list = []
+
+    # Need to map UUIDs to Gamertags for the list
+    players_map = {row['uuid']: row['gamertag'] for row in conn.execute("SELECT uuid, gamertag FROM players").fetchall()}
+
+    for uid, stats in player_wealth.items():
+        nw = calculate_net_worth(stats)
+        total_gdp += nw
+        name = players_map.get(uid, uid[:8])
+        rich_list.append({"name": name, "net_worth": nw})
+
+    # Sort for Oligarchs
+    rich_list.sort(key=lambda x: x['net_worth'], reverse=True)
+    top_3 = rich_list[:3]
+
+    # Formatting
+    gdp_formatted = f"${total_gdp:,}"
+    dist_km = f"{round(total_distance / 100000, 2):,} km"
+
+    days = total_playtime // (72000 * 24)
+    hours = (total_playtime % (72000 * 24)) // 72000
+    playtime_formatted = f"{days} Days, {hours} Hours"
+
+    conn.close()
+
+    return render_template('server.html',
+                           gdp=gdp_formatted,
+                           distance=dist_km,
+                           playtime=playtime_formatted,
+                           casualties=f"{total_deaths:,}",
+                           oligarchs=top_3)
+
 @app.route('/player/<uuid>')
 def player_profile(uuid):
     conn = get_db_connection()
@@ -168,6 +253,15 @@ def player_profile(uuid):
     deaths = stats.get('total_deaths', 0)
     kd = round(kills / deaths, 2) if deaths > 0 else kills
     
+    net_worth = calculate_net_worth(stats)
+
+    mining_log = [
+        {"name": "Ancient Debris", "count": stats.get('mined_ancient_debris', 0), "value": 5000},
+        {"name": "Diamond Ore", "count": stats.get('mined_diamond_ore', 0) + stats.get('mined_deepslate_diamond_ore', 0), "value": 1000},
+        {"name": "Emerald Ore", "count": stats.get('mined_emerald_ore', 0) + stats.get('mined_deepslate_emerald_ore', 0), "value": 2500},
+        {"name": "Gold Ore", "count": stats.get('mined_gold_ore', 0) + stats.get('mined_deepslate_gold_ore', 0), "value": 250}
+    ]
+
     unlocks = conn.execute("SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold, d.points FROM unlocks u JOIN definitions d ON u.achievement_id = d.id WHERE u.player_uuid = ? ORDER BY u.unlocked_at DESC", (uuid,)).fetchall()
     unlocked_ids = {u['id'] for u in unlocks}
     
@@ -191,7 +285,9 @@ def player_profile(uuid):
         "uuid": player_row['uuid'], "gamertag": player_row['gamertag'], "score": score,
         "rank": get_player_rank(score), "era_class": get_player_era(score),
         "stats": {"kills": kills, "deaths": deaths, "kd": kd, "playtime": f"{stats.get('play_time_ticks',0)//72000}h {(stats.get('play_time_ticks',0)%3600)//60}m"},
-        "achievements": all_achievements
+        "achievements": all_achievements,
+        "net_worth": net_worth,
+        "mining_log": mining_log
     })
 
 if __name__ == '__main__':

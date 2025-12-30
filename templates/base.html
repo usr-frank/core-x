@@ -21,6 +21,7 @@
         <div class="nav-bar">
             <a href="{{ url_for('index') }}" class="nav-pill {% if request.endpoint == 'index' %}active{% endif %}">Dashboard</a>
             <a href="{{ url_for('leaderboard') }}" class="nav-pill {% if request.endpoint == 'leaderboard' %}active{% endif %}">Hall of Fame</a>
+            <a href="{{ url_for('server_intel') }}" class="nav-pill {% if request.endpoint == 'server_intel' %}active{% endif %}">Server Intel</a>
         </div>
 
         {% block content %}{% endblock %}
