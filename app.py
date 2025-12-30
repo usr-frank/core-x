@@ -76,6 +76,20 @@ def get_server_era(total_score):
             "progress": progress
         }
 
+def get_player_era(score):
+    """
+    Calculates the Individual Player Era based on their Score.
+    This determines the visual style of their Calling Card.
+    """
+    if score >= 25000:
+        return "diamond-age"
+    elif score >= 10000:
+        return "iron-age"
+    elif score >= 5000:
+        return "bronze-age"
+    else:
+        return "stone-age"
+
 def get_player_rank(score):
     # Recruit: 0-499
     # Scout: 500-999
@@ -337,6 +351,147 @@ def leaderboard():
                            darwin=darwin,
                            no_lifers=no_lifers,
                            runners=runners)
+
+@app.route('/player/<uuid>')
+def player_profile(uuid):
+    conn = get_db_connection()
+
+    # 1. Fetch Player Basic Info & Total Score
+    player_row = conn.execute('''
+        SELECT
+            p.gamertag,
+            p.uuid,
+            p.last_seen,
+            COALESCE(SUM(d.points), 0) as score
+        FROM players p
+        LEFT JOIN unlocks u ON p.uuid = u.player_uuid
+        LEFT JOIN definitions d ON u.achievement_id = d.id
+        WHERE p.uuid = ?
+        GROUP BY p.uuid
+    ''', (uuid,)).fetchone()
+
+    if not player_row:
+        conn.close()
+        return "Player not found", 404
+
+    # 2. Fetch Stats
+    stats_rows = conn.execute('''
+        SELECT stat_name, value
+        FROM player_stats
+        WHERE player_uuid = ?
+    ''', (uuid,)).fetchall()
+
+    stats = {row['stat_name']: row['value'] for row in stats_rows}
+
+    # 3. Process Stats
+    kills = stats.get('total_kills', 0)
+    deaths = stats.get('total_deaths', 0)
+    play_time_ticks = stats.get('play_time_ticks', 0)
+    distance_cm = stats.get('distance_walked', 0)
+
+    # K/D Ratio
+    kd_ratio = round(kills / deaths, 2) if deaths > 0 else kills
+
+    # Playtime (Ticks -> Hours, Minutes)
+    # 20 ticks = 1 sec
+    total_seconds = play_time_ticks // 20
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    playtime_str = f"{hours}h {minutes}m"
+
+    # Distance (cm -> km)
+    distance_km = round(distance_cm / 100000, 2)
+
+    # 4. Fetch Achievements (Unlocked & Locked)
+    # Get Unlocked
+    unlocks = conn.execute('''
+        SELECT d.id, d.name, d.description, d.icon, u.unlocked_at, d.threshold, d.points
+        FROM unlocks u
+        JOIN definitions d ON u.achievement_id = d.id
+        WHERE u.player_uuid = ?
+        ORDER BY u.unlocked_at DESC
+    ''', (uuid,)).fetchall()
+
+    unlocked_ids = {u['id'] for u in unlocks}
+
+    # Get Locked (Progress)
+    # We need to fetch all definitions that are NOT in unlocked_ids
+    # AND left join with player_progress
+
+    params = [uuid]
+    if unlocked_ids:
+        placeholders = ','.join(['?'] * len(unlocked_ids))
+        params.extend(list(unlocked_ids))
+        query = f'''
+            SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold, d.points
+            FROM definitions d
+            LEFT JOIN player_progress pp ON d.id = pp.achievement_id AND pp.player_uuid = ?
+            WHERE d.id NOT IN ({placeholders})
+        '''
+    else:
+        query = '''
+            SELECT d.id, d.name, d.description, d.icon, pp.current_value, d.threshold, d.points
+            FROM definitions d
+            LEFT JOIN player_progress pp ON d.id = pp.achievement_id AND pp.player_uuid = ?
+        '''
+
+    progress_rows = conn.execute(query, tuple(params)).fetchall()
+
+    processed_unlocks = []
+    for u in unlocks:
+        processed_unlocks.append({
+            "name": u['name'],
+            "description": u['description'],
+            "icon": u['icon'],
+            "unlocked_at": u['unlocked_at'],
+            "is_unlocked": True,
+            "progress": 100,
+            "current": u['threshold'],
+            "total": u['threshold'],
+            "points": u['points']
+        })
+
+    processed_progress = []
+    for pr in progress_rows:
+        current = pr['current_value'] if pr['current_value'] else 0
+        percent = min(100, int((current / pr['threshold']) * 100))
+        processed_progress.append({
+            "name": pr['name'],
+            "description": pr['description'],
+            "icon": pr['icon'],
+            "is_unlocked": False,
+            "progress": percent,
+            "current": current,
+            "total": pr['threshold'],
+            "points": pr['points']
+        })
+
+    all_achievements = processed_unlocks + processed_progress
+
+    # 5. Determine Rank & Era
+    score = player_row['score']
+    rank_info = get_player_rank(score)
+    era_class = get_player_era(score)
+
+    conn.close()
+
+    player_data = {
+        "uuid": player_row['uuid'],
+        "gamertag": player_row['gamertag'],
+        "score": score,
+        "rank": rank_info,
+        "era_class": era_class,
+        "stats": {
+            "kills": kills,
+            "deaths": deaths,
+            "kd": kd_ratio,
+            "playtime": playtime_str,
+            "distance_km": distance_km
+        },
+        "achievements": all_achievements
+    }
+
+    return render_template('profile.html', player=player_data)
 
 def start_scanner():
     """Starts the background scanner thread"""

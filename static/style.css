@@ -253,11 +253,214 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     transition: width 0.5s ease-in-out;
 }
 
-/* Era Colors */
+/* Era Colors - GLOBAL BAR */
 .stone-age { background-color: #757575; }
 .bronze-age { background-color: #cd7f32; }
 .iron-age { background-color: #e0e0e0; }
 .diamond-age { background-color: #00ced1; box-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }
+
+/* --- CALLING CARD STYLES --- */
+.calling-card {
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.calling-card.stone-age { background: linear-gradient(45deg, #3a3a3a, #1a1a1a); }
+.calling-card.bronze-age { background: linear-gradient(45deg, #cd7f32, #8b4513); }
+.calling-card.iron-age { background: linear-gradient(45deg, #bdc3c7, #2c3e50); }
+.calling-card.diamond-age {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    animation: diamondPulse 8s infinite alternate;
+}
+
+@keyframes diamondPulse {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.2); }
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.card-rank-icon {
+    width: 80px;
+    height: 80px;
+    margin-right: 25px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+.card-identity {
+    flex-grow: 1;
+}
+
+.card-gamertag {
+    font-size: 2.2em;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.card-score {
+    font-size: 1.5em;
+    font-weight: 800;
+    background: rgba(0,0,0,0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.card-ironman {
+    font-size: 0.8em;
+    margin-left: 15px;
+}
+
+/* --- COMBAT RECORD GRID --- */
+.combat-record {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    color: var(--text-header);
+    font-size: 1.5em;
+    font-weight: 800;
+}
+
+/* --- PROFILE ACHIEVEMENTS --- */
+.section-title {
+    color: var(--text-header);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.medal {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.medal.unlocked {
+    border-left: 5px solid var(--accent-color);
+}
+.medal.locked {
+    opacity: 0.7;
+    background: var(--bg-color);
+}
+
+.medal-icon {
+    font-size: 2.5em;
+    width: 60px;
+    text-align: center;
+    margin-right: 20px;
+}
+.medal.locked .medal-icon {
+    filter: grayscale(100%);
+}
+
+.medal-info {
+    flex-grow: 1;
+}
+
+.medal-name {
+    font-weight: bold;
+    color: var(--text-header);
+    font-size: 1.1em;
+}
+
+.medal-desc {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.medal-date {
+    color: var(--accent-color);
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.medal-points {
+    font-weight: bold;
+    color: var(--text-tertiary); /* Default for locked */
+    font-size: 1.2em;
+    margin-left: 15px;
+}
+.medal.unlocked .medal-points {
+    color: var(--accent-color);
+}
+
+.medal-progress-container {
+    width: 100%;
+    background-color: var(--progress-track);
+    border-radius: 4px;
+    height: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    max-width: 200px;
+}
+
+.medal-progress-bar {
+    height: 100%;
+    background-color: var(--text-secondary);
+    transition: width 0.5s ease-in-out;
+}
+
+.medal-progress-text {
+    font-size: 0.75em;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
 
 /* Leaderboard Grid */
 .leaderboard-grid {
@@ -418,5 +621,20 @@ body { background-color: var(--bg-color); color: var(--text-main); font-family: 
     
     .chevron {
         margin-left: 5px;
+    }
+
+    /* Profile Mobile */
+    .card-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .card-rank-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    .card-score {
+        margin-top: 15px;
+        width: 100%;
+        text-align: center;
     }
 }
